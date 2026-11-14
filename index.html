@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Світло · група 5.1</title>
+<meta name="description" content="Чи є світло в будинку зараз, графік відключень групи 5.1 і статистика відключень.">
+<meta property="og:title" content="Світло · група 5.1">
+<meta property="og:description" content="Чи є світло зараз, графік і статистика відключень.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#1E2430">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231E2430'/%3E%3Cpath d='M18 4 8 18h7l-2 10 11-15h-7z' fill='%23FFB057'/%3E%3C/svg%3E">
+<link rel="preload" href="fonts/onest-cyrillic-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/onest-cyrillic-600.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:Onest;font-weight:400;font-display:swap;src:url(fonts/onest-cyrillic-400.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:Onest;font-weight:500;font-display:swap;src:url(fonts/onest-cyrillic-500.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:Onest;font-weight:600;font-display:swap;src:url(fonts/onest-cyrillic-600.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:Onest;font-weight:400;font-display:swap;src:url(fonts/onest-latin-400.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2212}
+@font-face{font-family:Onest;font-weight:500;font-display:swap;src:url(fonts/onest-latin-500.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2212}
+@font-face{font-family:Onest;font-weight:600;font-display:swap;src:url(fonts/onest-latin-600.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2212}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:#1E2430;-webkit-text-size-adjust:100%}
+body{font-family:Onest,system-ui,-apple-system,sans-serif;color:#DADDE2;font-size:15px;line-height:1.45;min-height:100vh;
+  padding:max(16px,env(safe-area-inset-top)) 16px max(32px,env(safe-area-inset-bottom))}
+main{max-width:1080px;margin:0 auto}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:28px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px}
+.brand svg{width:28px;height:28px;flex:none}
+.brand span{color:#8F98AA;font-weight:400}
+.upd{display:flex;align-items:center;gap:8px;font-size:13px;color:#8F98AA;text-align:right}
+.upd button{width:36px;height:36px;border-radius:50%;background:#2E3545;display:grid;place-items:center;flex:none}
+.upd button svg{width:18px;height:18px}
+.upd button.spin svg{animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.stale{display:none;margin:-14px 0 20px;padding:10px 14px;border-radius:12px;background:rgba(255,154,107,.12);color:#FF9A6B;font-size:14px}
+.hero h1{font-weight:600;font-size:34px;line-height:1.15;letter-spacing:-.02em}
+.hero h1.off{color:#FF6B5E}
+.hero p{margin-top:8px;font-size:16px;line-height:24px;color:#AEB5C3;max-width:62ch}
+.grid{display:grid;gap:16px;margin-top:28px}
+@media (min-width:980px){.grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}.wide{grid-column:1/-1}}
+.card{background:#262D3B;border-radius:20px;padding:18px 18px 16px}
+.card h2{font-weight:600;font-size:17px;line-height:24px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.card h2 em{font-style:normal;font-weight:400;font-size:15px;color:#8F98AA}
+.tabs{display:flex;gap:4px;padding:4px;border-radius:12px;background:#1A1F29;margin-bottom:16px}
+.tabs button{flex:1;height:36px;border-radius:9px;color:#8F98AA;font-weight:500;font-size:14px}
+.tabs button.on{background:#2E3545;color:#DADDE2}
+.bar{position:relative;height:44px;border-radius:12px;background:rgba(255,176,87,.88);overflow:hidden;margin-top:12px}
+.bar i,.strip i{position:absolute;top:0;bottom:0}
+.bar .p{background:#141922}
+.bar .x{background:repeating-linear-gradient(135deg,#141922 0 6px,rgba(255,107,94,.45) 6px 8px)}
+.bar .past{left:0;background:rgba(30,36,48,.45)}
+.bar .now{width:3px;margin-left:-1.5px;background:#DADDE2}
+.bar .g,.strip .g{inset:0;background:repeating-linear-gradient(90deg,transparent 0 calc(12.5% - 1px),rgba(30,36,48,.55) calc(12.5% - 1px) 12.5%)}
+.bar.none{background:#1A1F29}
+.scale{position:relative;height:18px;margin-top:6px;font-size:12px;color:#6B7488}
+.scale span{position:absolute;transform:translateX(-50%)}
+.scale span:first-child{transform:none}.scale span:last-child{transform:translateX(-100%)}
+.foot{display:flex;justify-content:space-between;gap:12px;margin-top:8px;font-weight:500;font-size:14px;color:#8F98AA}
+.foot .sum{color:#6B7488;font-weight:400;white-space:nowrap}
+.av{margin-top:4px;font-weight:500;font-size:14px;color:#FF6B5E}
+.lbl{font-size:14px;color:#8F98AA}
+.tot{font-weight:600;font-size:40px;line-height:1.1;letter-spacing:-.02em;margin:4px 0 2px}
+.sub{font-size:14px;color:#8F98AA;margin-bottom:14px}
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.kpi div{background:#2E3545;border-radius:14px;padding:10px 12px;min-width:0}
+.kpi span{display:block;font-size:12px;line-height:16px;color:#8F98AA}
+.kpi b{display:block;font-weight:600;font-size:16px;line-height:22px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi em{display:block;font-style:normal;font-size:12px;line-height:16px;color:#6B7488;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+svg.chart{width:100%;display:block;overflow:visible}
+svg.chart text{font:11px Onest,system-ui,sans-serif;fill:#6B7488}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 0 2px;font-size:13px;color:#8F98AA}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.row{display:grid;grid-template-columns:1fr auto;align-items:baseline;column-gap:12px;margin-top:12px}
+.row .t{font-size:14px;color:#8F98AA}.row .t b{color:#DADDE2;font-weight:500}
+.row .v{font-size:14px;white-space:nowrap}
+.row .b{grid-column:1/3;height:6px;border-radius:3px;background:#1A1F29;margin-top:6px;overflow:hidden}
+.row .b span{display:block;height:100%;border-radius:3px}
+.hint{font-size:13px;color:#6B7488;margin-top:2px}
+.day{margin-top:12px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.day .h{display:flex;justify-content:space-between;font-size:13px;line-height:18px;margin-bottom:5px;color:#8F98AA}
+.day .h b{font-weight:500;color:#DADDE2}.day.sel .h b{color:#C4B5FF}
+.strip{position:relative;height:16px;border-radius:6px;background:rgba(255,176,87,.85);overflow:hidden}
+.strip .p,.strip .u{background:#141922}
+.strip .e{background:repeating-linear-gradient(135deg,#141922 0 5px,rgba(255,107,94,.55) 5px 7px)}
+.strip .n{background:repeating-linear-gradient(135deg,#141922 0 5px,rgba(255,154,107,.45) 5px 7px)}
+.strip .f{background:#2E3545}
+.strip .g{background:repeating-linear-gradient(90deg,transparent 0 calc(25% - 1px),rgba(30,36,48,.6) calc(25% - 1px) 25%)}
+.log{display:grid;grid-template-columns:auto 1fr auto;column-gap:12px;row-gap:2px;font-size:14px;line-height:20px;margin-top:12px}
+.log .d{grid-column:1/4;margin:10px 0 4px;font-size:13px;color:#8F98AA;display:flex;justify-content:space-between}
+.log .d:first-child{margin-top:0}
+.log .tm{white-space:nowrap}.log .du{color:#8F98AA;white-space:nowrap;text-align:right}
+.log .ty{font-size:13px;color:#8F98AA;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.log .ty i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px}
+.log small{color:#6B7488}
+.live{color:#FF6B5E}
+.more{width:100%;height:40px;margin-top:12px;border-radius:10px;background:#2E3545;font-weight:500;font-size:14px}
+.empty{font-size:14px;color:#8F98AA;padding:8px 0}
+footer{margin-top:28px;font-size:13px;line-height:20px;color:#6B7488;max-width:70ch}
+footer a{color:#8F98AA}
+.skel{opacity:.4}
+@media (max-width:480px){.hero h1{font-size:28px}.tot{font-size:34px}.kpi{gap:6px}.kpi div{padding:9px 10px}.kpi b{white-space:normal;font-size:15px;line-height:20px}.foot{flex-direction:column;gap:2px}}
+@media (prefers-reduced-motion:reduce){.upd button.spin svg{animation:none}}
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#262D3B"/><path d="M18 4 8 18h7l-2 10 11-15h-7z" fill="#FFB057"/></svg>Світло <span>· група 5.1</span></div>
+    <div class="upd"><span id="upd">Завантаження…</span><button id="refresh" aria-label="Оновити"><svg viewBox="0 0 24 24" fill="none" stroke="#DADDE2" stroke-width="2" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v4h-4"/></svg></button></div>
+  </div>
+  <div class="stale" id="stale"></div>
+  <section class="hero skel" id="hero"><h1 id="h1">Світло</h1><p id="hp">Завантажую дані…</p></section>
+
+  <div class="grid">
+    <section class="card wide" id="sched">
+      <div class="tabs" id="schedTabs"><button data-d="0" class="on">Сьогодні</button><button data-d="1">Завтра</button></div>
+      <h2 id="sTitle"></h2>
+      <div class="bar" id="sBar"></div>
+      <div class="scale"><span style="left:0">00</span><span style="left:25%">06</span><span style="left:50%">12</span><span style="left:75%">18</span><span style="left:100%">24</span></div>
+      <div class="foot"><span id="sList"></span><span class="sum" id="sSum"></span></div>
+      <div class="av" id="sAv"></div>
+    </section>
+
+    <section class="card">
+      <div class="tabs" id="per"><button data-p="7" class="on">7 днів</button><button data-p="30">30 днів</button><button data-p="0">Усе</button></div>
+      <div class="lbl">Без світла</div>
+      <div class="tot" id="tot">—</div>
+      <div class="sub" id="sub"></div>
+      <div class="kpi" id="kpi"></div>
+      <svg class="chart" id="chart" role="img" aria-label="Години без світла по днях"></svg>
+      <div class="legend" id="legend"></div>
+      <div id="types"></div>
+      <div class="hint">Тип — за графіком, відомим на момент відключення.</div>
+    </section>
+
+    <div style="display:grid;gap:16px">
+      <section class="card"><h2>По днях <em>0 · 6 · 12 · 18 · 24</em></h2><div id="days"></div></section>
+      <section class="card"><h2>Журнал <em id="jrSub"></em></h2><div id="jr"></div></section>
+    </div>
+  </div>
+
+  <footer>
+    Неофіційна сторінка мешканців. Факт відключення — датчик у щитку будинку (оновлення щохвилини, коли в будинку є інтернет).
+    Графік — ДТЕК Дніпровські електромережі, група 5.1. Екстрені відключення — канал «Дніпро Аварійка».
+    <span id="src"></span>
+  </footer>
+</main>
+<script>
+"use strict";
+const DATA_RAW = "https://raw.githubusercontent.com/kyrylohn/svitlo/data/data.json";
+const DATA_LOCAL = new URLSearchParams(location.search).get("data"); // лише для тесту: локальний *.json того ж сайту
+const DATA_URL = DATA_LOCAL && /^[\w.-]+\.json$/.test(DATA_LOCAL) ? DATA_LOCAL : DATA_RAW;
+const CACHE = "svitlo-data-v1";
+const TZ = "Europe/Kyiv";
+const TYPES = {
+  p: { name: "За графіком", color: "#6B7488" },
+  e: { name: "Екстрені", color: "#FF6B5E" },
+  n: { name: "Поза графіком", color: "#FF9A6B" },
+  u: { name: "Невідомо", color: "#3A4252" },
+};
+const ORDER = ["p", "e", "n", "u"];
+const DN = ["Нд", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
+const DNF = ["неділя", "понеділок", "вівторок", "середа", "четвер", "пʼятниця", "субота"];
+const MN = ["січня", "лютого", "березня", "квітня", "травня", "червня", "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"];
+const $ = (id) => document.getElementById(id);
+const pad = (n) => String(n).padStart(2, "0");
+
+/* ---------- час за Києвом ---------- */
+const FMT = new Intl.DateTimeFormat("en-GB", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", weekday: "short", hourCycle: "h23" });
+const WD = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+function kp(sec) {
+  const o = {};
+  for (const p of FMT.formatToParts(new Date(sec * 1000))) o[p.type] = p.value;
+  return { y: +o.year, m: +o.month, d: +o.day, h: +o.hour % 24, mi: +o.minute, wd: WD[o.weekday] };
+}
+function kMid(y, m, d) { // epoch-секунди київської півночі дати y-m-d (m 1..12, d може виходити за межі місяця)
+  const u = new Date(Date.UTC(y, m - 1, d)); y = u.getUTCFullYear(); m = u.getUTCMonth() + 1; d = u.getUTCDate();
+  const want = Date.UTC(y, m - 1, d) / 1000;
+  let t = want;
+  for (let i = 0; i < 3; i++) { const p = kp(t); t += want - Date.UTC(p.y, p.m - 1, p.d, p.h, p.mi) / 1000; }
+  return t;
+}
+const hm = (sec) => { const p = kp(sec); return `${pad(p.h)}:${pad(p.mi)}`; };
+const dm = (sec) => { const p = kp(sec); return `${pad(p.d)}.${pad(p.m)}`; };
+const hmm = (m) => `${pad(Math.floor(m / 60) % 24)}:${pad(m % 60)}`;
+const dur = (sec) => {
+  const m = Math.round(sec / 60);
+  if (m < 60) return `${Math.max(m, 1)} хв`;
+  const h = Math.floor(m / 60), r = m % 60;
+  return `${h} год${r ? ` ${r} хв` : ""}`;
+};
+const plural = (n, a, b, c) => (n % 10 === 1 && n % 100 !== 11 ? a : [2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100) ? b : c);
+const nowS = () => Date.now() / 1000;
+const ts = (iso) => (iso ? Date.parse(iso) / 1000 : null);
+
+/* ---------- стан ---------- */
+let D = null, period = 7, selDay = null, showAll = false, schedDay = 0, lastFetchOk = 0;
+const fixed = (x) => (x == null ? null : x);
+
+/* ---------- завантаження ---------- */
+async function load(manual) {
+  const btn = $("refresh");
+  btn.classList.add("spin");
+  try {
+    const r = await fetch(`${DATA_URL}?t=${Math.floor(Date.now() / 30000)}`, { cache: "no-store" });
+    if (!r.ok) throw new Error(r.status);
+    const d = await r.json();
+    if (!D || (d.generated || 0) >= (D.generated || 0)) { D = d; try { localStorage.setItem(CACHE, JSON.stringify(d)); } catch (e) {} }
+    lastFetchOk = Date.now();
+  } catch (e) {
+    if (manual) $("upd").textContent = "Немає звʼязку";
+  } finally {
+    btn.classList.remove("spin");
+    render();
+  }
+}
+
+/* ---------- розрахунки ---------- */
+function journal() {
+  const list = (D.zhurnal || []).map((x) => ({ s: +x.s, e: +x.e, t: TYPES[x.t] ? x.t : "u" }));
+  if (D.svitlo === "off" && D.pochatok > 0) list.push({ s: D.pochatok, e: nowS(), t: TYPES[D.typ] ? D.typ : "u", live: true });
+  return list.sort((a, b) => a.s - b.s);
+}
+
+function render() {
+  if (!D) return;
+  $("hero").classList.remove("skel");
+  const now = nowS(), gen = D.generated || 0, age = now - gen;
+  $("upd").textContent = gen ? `Дані на ${hm(gen)}${dm(gen) !== dm(now) ? ` ${dm(gen)}` : ""}` : "";
+  const st = $("stale");
+  if (age > 20 * 60) {
+    st.style.display = "block";
+    st.textContent = `Будинок не надсилав дані ${dur(age)} — можливо, немає інтернету. Показано останнє відоме.`;
+  } else st.style.display = "none";
+  hero(now);
+  sched(now);
+  stats(now);
+}
+
+function hero(now) {
+  const off = D.svitlo === "off" && D.pochatok > 0;
+  const zh = D.zhurnal || [];
+  const h1 = $("h1"), hp = $("hp");
+  const ty = { p: "за графіком", e: "екстрене", n: "поза графіком" }[D.typ] || "";
+  const av = ts(D.avariika && D.avariika.do), vk = ts(D.vkliuchennia), nx = ts(D.nastupne);
+  const t0 = kMid(kp(now).y, kp(now).m, kp(now).d);
+  let todaySec = 0;
+  for (const x of journal()) if (x.e > t0) todaySec += Math.min(x.e, now) - Math.max(x.s, t0);
+  const sh = `Сьогодні без світла ${todaySec > 30 ? dur(todaySec) : "0 хв"}.`;
+  const when = (t) => { const a = kp(t), b = kp(now); const dd = Math.round((kMid(a.y, a.m, a.d) - kMid(b.y, b.m, b.d)) / 86400); return `${dd === 0 ? "сьогодні" : dd === 1 ? "завтра" : dm(t)} о ${hm(t)}`; };
+  if (D.svitlo === "unknown" || D.svitlo === "unavailable") {
+    h1.className = ""; h1.textContent = "Невідомо, чи є світло"; hp.textContent = "Датчик у щитку зараз не відповідає. " + sh; return;
+  }
+  if (off) {
+    h1.className = "off"; h1.textContent = `Світла немає ${dur(now - D.pochatok)}`;
+    let s = `Зникло о ${hm(D.pochatok)}${dm(D.pochatok) !== dm(now) ? ` (${dm(D.pochatok)})` : ""}${ty ? `, відключення ${ty}` : ""}.`;
+    if (av && av > now) s += ` За «Дніпро Аварійка» — до ${hm(av)}${D.avariika.mozhlyve_podovzhennia ? " (можливе подовження)" : ""}.`;
+    else if (vk && vk > now) s += ` За графіком включення ${when(vk)}.`;
+    hp.textContent = `${s} ${sh}`;
+  } else {
+    h1.className = ""; h1.textContent = zh.length ? `Світло є ${dur(now - zh[zh.length - 1].e)}` : "Світло є";
+    let s = sh;
+    if (nx && nx > now) s += ` Наступне відключення за графіком — ${when(nx)}${vk && vk > nx ? `, до ${hm(vk)}` : ""}.`;
+    else s += " Найближчим часом відключень за графіком немає.";
+    hp.textContent = s;
+  }
+}
+
+function sched(now) {
+  const g = D.grafik || {};
+  const today = kp(now);
+  // дані графіка — на дату експорту; якщо минула північ, «завтра» експорту стало «сьогодні»
+  const [gy, gm, gd] = (g.date || "").split("-").map(Number);
+  const shift = gy ? Math.round((kMid(today.y, today.m, today.d) - kMid(gy, gm, gd)) / 86400) : 0;
+  const pick = (k) => { const i = k + shift; return i === 0 ? g.today : i === 1 ? g.tomorrow : null; };
+  document.querySelectorAll("#schedTabs button").forEach((b) => b.classList.toggle("on", +b.dataset.d === schedDay));
+  const t0 = kMid(today.y, today.m, today.d + schedDay);
+  const p = kp(t0 + 3600);
+  $("sTitle").innerHTML = `${schedDay ? "Завтра" : "Сьогодні"} <em>${DNF[p.wd]}, ${p.d} ${MN[p.m - 1]}</em>`;
+  const spans = pick(schedDay);
+  const bar = $("sBar"), pct = (m) => `${((m / 1440) * 100).toFixed(3)}%`;
+  let html = "", list = "", sum = 0;
+  if (Array.isArray(spans)) {
+    const pl = spans.filter((x) => x.t === "p").sort((a, b) => a.s - b.s);
+    for (const x of pl) { html += `<i class="p" style="left:${pct(x.s)};width:${pct(x.e - x.s)}"></i>`; sum += x.e - x.s; }
+    list = pl.length ? pl.map((x) => `${hmm(x.s)}–${x.e >= 1440 ? "24:00" : hmm(x.e)}`).join(", ") : "Відключень за графіком немає";
+    bar.classList.remove("none");
+  } else {
+    bar.classList.add("none");
+    list = schedDay && (g.tomorrow_status === "waiting_for_schedule" || !g.tomorrow || !g.tomorrow.length) ? "Графік на завтра ще не оприлюднено" : "Немає даних графіка";
+  }
+  // екстрене зараз: від зникнення світла до часу з Аварійки
+  const av = ts(D.avariika && D.avariika.do);
+  let avTxt = "";
+  if (!schedDay && D.svitlo === "off" && D.pochatok > 0) {
+    const a = Math.max(0, (D.pochatok - t0) / 60), b = Math.min(1440, ((av && av > now ? av : now) - t0) / 60);
+    if (b > a) html += `<i class="x" style="left:${pct(a)};width:${pct(b - a)}"></i>`;
+    avTxt = av && av > now ? `Екстрені до ${hm(av)}` : D.typ === "e" ? "Екстрене відключення" : "";
+  }
+  if (!schedDay) {
+    const m = (now - t0) / 60;
+    html += `<i class="past" style="width:${pct(m)}"></i><i class="now" style="left:${pct(m)}"></i>`;
+  }
+  bar.innerHTML = html + '<i class="g"></i>';
+  $("sList").textContent = list;
+  $("sSum").textContent = Array.isArray(spans) && sum ? `без світла ${dur(sum * 60)}` : "";
+  $("sAv").textContent = avTxt;
+}
+
+function stats(now) {
+  const list = journal();
+  document.querySelectorAll("#per button").forEach((b) => b.classList.toggle("on", +b.dataset.p === period));
+  const tp = kp(now);
+  const todayMid = kMid(tp.y, tp.m, tp.d);
+  const firstP = list.length ? kp(list[0].s) : tp;
+  const firstMid = kMid(firstP.y, firstP.m, firstP.d);
+  let F = period ? kMid(tp.y, tp.m, tp.d - (period - 1)) : firstMid;
+  const days = [];
+  for (let i = 0; ; i++) {
+    const p0 = kp(F + 3600);
+    const t0 = kMid(p0.y, p0.m, p0.d + i), t1 = kMid(p0.y, p0.m, p0.d + i + 1);
+    if (t0 > todayMid) break;
+    const p = kp(t0 + 3600);
+    days.push({ k: `${p.y}-${p.m}-${p.d}`, p, t0, t1, segs: [], sum: { p: 0, e: 0, n: 0, u: 0 }, tot: 0 });
+    if (i > 400) break;
+  }
+  const inP = list.filter((x) => x.e > F);
+  for (const x of inP) for (const d of days) {
+    const s = Math.max(x.s, d.t0), e = Math.min(x.e, d.t1);
+    if (e > s) { d.segs.push({ s, e, t: x.t }); d.sum[x.t] += e - s; d.tot += e - s; }
+  }
+  const span = Math.max(1, Math.min(now, days[days.length - 1].t1) - F);
+  const tot = days.reduce((a, d) => a + d.tot, 0), n = inP.length;
+  const live = list.some((x) => x.live);
+  $("tot").textContent = tot ? dur(tot) : "0 хв";
+  $("sub").textContent = n ? `${Math.round((tot / span) * 100)} % часу · ${n} ${plural(n, "відключення", "відключення", "відключень")}${live ? " · зараз світла немає" : ""}` : "Відключень не було";
+  let longest = null;
+  for (const x of inP) { const s = Math.max(x.s, F), e = Math.min(x.e, now); if (!longest || e - s > longest.e - longest.s) longest = { s, e, live: x.live }; }
+  let gap = null, prevE = F;
+  for (const x of inP) { if (x.s - prevE > (gap ? gap.e - gap.s : 0)) gap = { s: prevE, e: x.s }; prevE = Math.max(prevE, x.e); }
+  if (!live && now - prevE > (gap ? gap.e - gap.s : 0)) gap = { s: prevE, e: now, live: true };
+  const fullDays = Math.max(1, span / 86400);
+  const kd = (x) => (x ? `${DN[kp(x.s).wd]} ${dm(x.s)}${x.live ? " · триває" : ""}` : "—");
+  $("kpi").innerHTML = `
+    <div><span>Найдовше без світла</span><b>${longest ? dur(longest.e - longest.s) : "—"}</b><em>${kd(longest)}</em></div>
+    <div><span>Найдовше зі світлом</span><b>${gap ? dur(gap.e - gap.s) : "—"}</b><em>${gap ? (gap.s > F ? kd(gap) : "з початку періоду") : "—"}</em></div>
+    <div><span>Середньо за добу</span><b>${(tot / fullDays / 3600).toFixed(1).replace(".", ",")} год</b><em>${n ? `${(n / fullDays).toFixed(1).replace(".", ",")} відкл./добу` : "—"}</em></div>`;
+  chart(days);
+  const used = ORDER.filter((t) => days.some((d) => d.sum[t] > 0));
+  $("legend").innerHTML = used.map((t) => `<span><i style="background:${TYPES[t].color}"></i>${TYPES[t].name}</span>`).join("");
+  const byT = ORDER.map((t) => ({ t, v: days.reduce((a, d) => a + d.sum[t], 0), c: inP.filter((x) => x.t === t).length })).filter((x) => x.v > 0);
+  const mx = Math.max(1, ...byT.map((x) => x.v));
+  $("types").innerHTML = byT.map((x) => `<div class="row"><span class="t"><b>${TYPES[x.t].name}</b> · ${x.c} ${plural(x.c, "раз", "рази", "разів")}</span><span class="v">${dur(x.v)}</span><div class="b"><span style="width:${(x.v / mx) * 100}%;background:${TYPES[x.t].color}"></span></div></div>`).join("");
+  // смуги
+  const pc = (v) => `${((v / 86400) * 100).toFixed(3)}%`;
+  const byKey = Object.fromEntries(days.map((d) => [d.k, d]));
+  $("days").innerHTML = [...days].reverse().map((d) => {
+    const L = d.t1 - d.t0;
+    const p2 = (v) => `${((v / L) * 100).toFixed(3)}%`;
+    const fut = d.t1 > now ? `<i class="f" style="left:${p2(now - d.t0)};right:0"></i>` : "";
+    return `<div class="day${selDay === d.k ? " sel" : ""}" data-k="${d.k}"><div class="h"><b>${DN[d.p.wd]} ${pad(d.p.d)}.${pad(d.p.m)}</b><span>${d.tot ? dur(d.tot) : "без відключень"}</span></div>
+      <div class="strip">${d.segs.map((s) => `<i class="${s.t}" style="left:${p2(s.s - d.t0)};width:${p2(s.e - s.s)}"></i>`).join("")}${fut}<i class="g"></i></div></div>`;
+  }).join("");
+  document.querySelectorAll(".day").forEach((el) => (el.onclick = () => { selDay = selDay === el.dataset.k ? null : el.dataset.k; render(); }));
+  // журнал
+  let rows = inP.slice().reverse();
+  if (selDay && byKey[selDay]) { const d = byKey[selDay]; rows = rows.filter((x) => x.e > d.t0 && x.s < d.t1); }
+  const LIM = 12, cut = !showAll && !selDay && rows.length > LIM, vis = cut ? rows.slice(0, LIM) : rows;
+  $("jrSub").textContent = selDay && byKey[selDay] ? `${pad(byKey[selDay].p.d)}.${pad(byKey[selDay].p.m)} · тап по дню — скинути` : `${rows.length} ${plural(rows.length, "запис", "записи", "записів")}`;
+  let html = "", lastK = "";
+  for (const x of vis) {
+    const p = kp(x.s), k = `${p.y}-${p.m}-${p.d}`;
+    if (k !== lastK) { html += `<div class="d"><span>${DN[p.wd]} ${dm(x.s)}</span><span>${byKey[k] ? dur(byKey[k].tot) : ""}</span></div>`; lastK = k; }
+    const end = x.live ? '<span class="live">триває</span>' : `${hm(x.e)}${dm(x.e) !== dm(x.s) ? ` <small>${dm(x.e)}</small>` : ""}`;
+    html += `<span class="tm">${hm(x.s)} – ${end}</span><span class="ty"><i style="background:${TYPES[x.t].color}"></i>${TYPES[x.t].name}</span><span class="du">${dur(x.e - x.s)}</span>`;
+  }
+  $("jr").innerHTML = (vis.length ? `<div class="log">${html}</div>` : '<div class="empty">Відключень не було</div>') + (cut ? `<button class="more" id="more">Показати всі (${rows.length})</button>` : "");
+  if (cut) $("more").onclick = () => { showAll = true; render(); };
+}
+
+function chart(days) {
+  const svg = $("chart");
+  const W = 340, H = 130, X0 = 26, n = days.length, bw = (W - X0) / n;
+  const maxH = Math.max(6, Math.ceil(Math.max(...days.map((d) => d.tot / 3600)) / 6) * 6);
+  const y = (h) => H - (h / maxH) * H;
+  let g = "";
+  for (let h = 0; h <= maxH; h += maxH / 2) g += `<line x1="${X0}" x2="${W}" y1="${y(h)}" y2="${y(h)}" stroke="#323B4C" stroke-width="1"/><text x="0" y="${y(h) + 4}">${h} г</text>`;
+  const step = n <= 8 ? 1 : n <= 16 ? 2 : Math.ceil(n / 7);
+  days.forEach((d, i) => {
+    let acc = 0;
+    const x = X0 + i * bw + bw * 0.15, w = Math.max(2, bw * 0.7);
+    for (const t of ORDER) {
+      const v = d.sum[t] / 3600;
+      if (v <= 0) continue;
+      g += `<rect x="${x}" y="${y(acc + v)}" width="${w}" height="${Math.max(1, (v / maxH) * H)}" fill="${TYPES[t].color}" rx="${n > 20 ? 1 : 3}"/>`;
+      acc += v;
+    }
+    if (selDay === d.k) g += `<rect x="${x - 2}" y="-4" width="${w + 4}" height="${H + 8}" fill="none" stroke="#9A7CFF" stroke-width="1.5" rx="4"/>`;
+    if (i % step === 0 || i === n - 1) g += `<text x="${x + w / 2}" y="${H + 16}" text-anchor="middle">${n <= 8 ? DN[d.p.wd] : `${pad(d.p.d)}.${pad(d.p.m)}`}</text>`;
+    g += `<rect data-k="${d.k}" x="${X0 + i * bw}" y="0" width="${bw}" height="${H + 18}" fill="transparent" style="cursor:pointer"/>`;
+  });
+  svg.setAttribute("viewBox", `0 0 ${W} ${H + 22}`);
+  svg.innerHTML = g;
+  svg.querySelectorAll("rect[data-k]").forEach((el) => (el.onclick = () => { selDay = selDay === el.dataset.k ? null : el.dataset.k; render(); }));
+}
+
+/* ---------- події ---------- */
+document.querySelectorAll("#per button").forEach((b) => (b.onclick = () => { period = +b.dataset.p; selDay = null; showAll = false; render(); }));
+document.querySelectorAll("#schedTabs button").forEach((b) => (b.onclick = () => { schedDay = +b.dataset.d; render(); }));
+$("refresh").onclick = () => load(true);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) load(); });
+try { const c = JSON.parse(localStorage.getItem(CACHE)); if (c && c.v === 1) { D = c; render(); } } catch (e) {}
+load();
+setInterval(load, 60000);
+setInterval(render, 30000);
+</script>
+</body>
+</html>
