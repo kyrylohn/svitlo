@@ -395,7 +395,7 @@ function sched(now) {
   $("sList").textContent = list;
   $("sSum").textContent = Array.isArray(spans) && sum ? `без світла ${dur(sum * 60)}` : "";
   $("sAv").textContent = avTxt;
-  if (avTxt && C.emergencyName && TG_RE.test(C.emergencyUrl)) {
+  if (av && av > now && !schedDay && C.emergencyName && TG_RE.test(C.emergencyUrl)) { // лише коли Аварійка дала час
     const a = document.createElement("a"); a.href = C.emergencyUrl; a.target = "_blank"; a.rel = "noopener"; a.textContent = `«${C.emergencyName}»`;
     a.onclick = () => tclick("avariika");
     $("sAv").append(" · джерело — ", a);
