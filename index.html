@@ -144,7 +144,7 @@ footer #src,footer .fl{display:block;margin-top:4px}footer #flinks{display:block
       <svg class="chart" id="chart" role="img" aria-label="Години без світла по днях"></svg>
       <div class="legend" id="legend"></div>
       <div id="types"></div>
-      <div class="hint">Тип — за графіком, відомим на момент відключення.</div>
+      <div class="hint">За графіком — якщо світло зникло в межах планового відключення (за графіком, відомим на той момент). Усе інше — екстрені, як їх рахує ДТЕК.</div>
     </section>
 
     <div style="display:grid;gap:16px" id="histCol">
@@ -181,10 +181,11 @@ const TZ = C.tz;
 const TYPES = {
   p: { name: "За графіком", color: "#6B7488" },
   e: { name: "Екстрені", color: "#FF6B5E" },
-  n: { name: "Поза графіком", color: "#FF9A6B" },
   u: { name: "Невідомо", color: "#3A4252" },
 };
-const ORDER = ["p", "e", "n", "u"];
+const ORDER = ["p", "e", "u"];
+// «поза графіком» (n) = екстрені (e), як рахує ДТЕК; старі записи n показуємо як e
+const normT = (t) => (t === "n" ? "e" : TYPES[t] ? t : "u");
 const DN = ["Нд", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
 const DNF = ["неділя", "понеділок", "вівторок", "середа", "четвер", "пʼятниця", "субота"];
 const MN = ["січня", "лютого", "березня", "квітня", "травня", "червня", "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"];
@@ -294,8 +295,8 @@ function planned() {
 
 /* ---------- розрахунки ---------- */
 function journal() {
-  const list = (D.zhurnal || []).map((x) => ({ s: +x.s, e: +x.e, t: TYPES[x.t] ? x.t : "u" }));
-  if (D.svitlo === "off" && D.pochatok > 0) list.push({ s: D.pochatok, e: nowS(), t: TYPES[D.typ] ? D.typ : "u", live: true });
+  const list = (D.zhurnal || []).map((x) => ({ s: +x.s, e: +x.e, t: normT(x.t) }));
+  if (D.svitlo === "off" && D.pochatok > 0) list.push({ s: D.pochatok, e: nowS(), t: normT(D.typ), live: true });
   return list.sort((a, b) => a.s - b.s);
 }
 
@@ -321,7 +322,7 @@ function hero(now) {
   const off = D.svitlo === "off" && D.pochatok > 0;
   const zh = D.zhurnal || [];
   const h1 = $("h1"), hp = $("hp");
-  const ty = { p: "за графіком", e: "екстрене", n: "поза графіком" }[D.typ] || "";
+  const ty = { p: "за графіком", e: "екстрене", n: "екстрене" }[D.typ] || "";
   const pl = planned(), cur = pl.find((x) => x.s <= now && x.e > now), nxt = pl.find((x) => x.s > now);
   const av = ts(D.avariika && D.avariika.do);
   const nx = ts(D.nastupne) || (nxt ? nxt.s : null), vk = ts(D.vkliuchennia) || (cur ? cur.e : nxt ? nxt.e : null);
@@ -415,7 +416,7 @@ function stats(now) {
     const t0 = kMid(p0.y, p0.m, p0.d + i), t1 = kMid(p0.y, p0.m, p0.d + i + 1);
     if (t0 > todayMid) break;
     const p = kp(t0 + 3600);
-    days.push({ k: `${p.y}-${p.m}-${p.d}`, p, t0, t1, segs: [], sum: { p: 0, e: 0, n: 0, u: 0 }, tot: 0 });
+    days.push({ k: `${p.y}-${p.m}-${p.d}`, p, t0, t1, segs: [], sum: { p: 0, e: 0, u: 0 }, tot: 0 });
     if (i > 400) break;
   }
   const inP = list.filter((x) => x.e > F);
@@ -579,7 +580,7 @@ function footLink(url, note, click) {
     a.append(C.chatName || "Чат будинку в Telegram");
     footLink(C.chatUrl, "чат будинку: новини й обговорення", "chat");
   }
-  if (HAS_HOME && C.emergencyName && TG_RE.test(C.emergencyUrl)) footLink(C.emergencyUrl, `канал «${C.emergencyName}», звідки беремо дані про екстрені відключення`, "avariika");
+  if (HAS_HOME && C.emergencyName && TG_RE.test(C.emergencyUrl)) footLink(C.emergencyUrl, `канал «${C.emergencyName}», звідки беремо орієнтовний час включення при екстрених відключеннях`, "avariika");
 })();
 if (HAS_HOME && !DATA_LOCAL) try { const c = JSON.parse(localStorage.getItem(CACHE)); if (c && c.v === 1) { D = c; render(); } } catch (e) {}
 load();

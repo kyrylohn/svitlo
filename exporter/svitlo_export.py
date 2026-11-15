@@ -5,7 +5,7 @@
 (Raspberry Pi, NAS, старий ноутбук, Mac). Що робить:
   1. Раз на `interval` секунд перевіряє, чи є мережева напруга
      (ping / http / команда / Home Assistant).
-  2. Веде журнал відключень зі збіганням «за графіком / поза графіком».
+  2. Веде журнал відключень з типом «за графіком» / «екстрене» (усе поза графіком, як рахує ДТЕК).
   3. Підтягує графік відключень з outage-data-ua (Baskerville42).
   4. Пише data.json у локальний клон гілки `data` і пушить його (один
      коміт, що перезаписується, тож історія не росте).
@@ -226,13 +226,13 @@ class Tracker:
 
 
 def classify(spans_today, ts):
-    """'p' — за графіком, 'n' — поза графіком, '' — графіка немає."""
+    """'p' — за графіком, 'e' — екстрене (усе поза графіком, як у ДТЕК), '' — графіка немає."""
     if spans_today is None:
         return ""
     dt = datetime.fromtimestamp(ts, KYIV)
     m = dt.hour * 60 + dt.minute
     return "p" if any(sp["t"] == "p" and sp["s"] <= m + 20 and sp["e"] >= m - 5
-                      for sp in spans_today) else "n"
+                      for sp in spans_today) else "e"
 
 
 # ---------- data.json ----------
