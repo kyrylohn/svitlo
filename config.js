@@ -19,8 +19,6 @@ window.SVITLO = {
   // Сповіщення в Telegram, що сторінкою користуються (Worker з папки worker/). "" — вимкнено.
   notify: "https://svitlo-notify.kyrylohn.workers.dev",
 
-  // Посилання внизу сторінки «Як зробити таку для свого будинку» ("" — не показувати)
-  sourceUrl: "https://github.com/kyrylohn/svitlo",
 
   tz: "Europe/Kyiv",
 };

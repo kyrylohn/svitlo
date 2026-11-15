@@ -60,8 +60,8 @@
    dataUrl: "",          // ← обов'язково очистіть, інакше сторінка покаже дані НАШОГО будинку
    emergencyName: "",
    notify: "",           // ← очистіть (це наш бот статистики)
-   sourceUrl: "https://github.com/kyrylohn/svitlo",   // або "" — посилання внизу сторінки
    ```
+   Внизу сторінки лишається посилання на цей репозиторій (`kyrylohn/svitlo`) — будь ласка, не прибирайте його: так інші будинки знайдуть інструкцію.
 3. Відредагуйте meta-теги на початку `index.html` (`<title>`, `og:title`, `og:description`, `og:url`, `og:image`). Їх читають Telegram / Viber для прев'ю посилання, а вони JavaScript не виконують, тож ці теги задаються вручну. Рядки з `og:image` і `twitter:image` або видаліть, або вкажіть свою картинку.
 4. **Settings → Pages → Deploy from a branch → `main` / `(root)`**. За хвилину сторінка буде на `https://<ваш-логін>.github.io/svitlo/`.
 
