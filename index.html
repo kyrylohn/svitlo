@@ -108,6 +108,7 @@ svg.chart text{font:11px Onest,system-ui,sans-serif;fill:#6B7488}
 .empty{font-size:14px;color:#8F98AA;padding:8px 0}
 footer{margin-top:28px;font-size:13px;line-height:20px;color:#6B7488;max-width:70ch}
 footer a{color:#8F98AA}
+footer #src{display:block;margin-top:10px}.gh{display:inline-flex;align-items:center;gap:6px;color:#DADDE2!important;font-weight:600;text-decoration:none}.gh svg{width:16px;height:16px}.gh:hover{text-decoration:underline}
 .skel{opacity:.4}
 @media (max-width:480px){.hero h1{font-size:28px}.tot{font-size:34px}.kpi{gap:6px}.kpi div{padding:9px 10px}.kpi b{white-space:normal;font-size:15px;line-height:20px}.foot{flex-direction:column;gap:2px}}
 @media (prefers-reduced-motion:reduce){.upd button.spin svg{animation:none}}
@@ -552,7 +553,10 @@ document.addEventListener("visibilitychange", () => { if (!document.hidden) load
   f.push(`Графік — ${[C.provider, grp].filter(Boolean).join(", ") || "відкриті дані outage-data-ua"}.`);
   if (HAS_HOME && C.emergencyName) f.push(`Екстрені відключення — канал «${C.emergencyName}».`);
   $("fnote").textContent = f.join(" ");
-  if (C.sourceUrl) $("src").innerHTML = `<a href="${encodeURI(C.sourceUrl)}">Як зробити таку сторінку для свого будинку</a>`;
+  if (C.sourceUrl) {
+    const u = encodeURI(C.sourceUrl), name = C.sourceUrl.replace(/^https?:\/\/(www\.)?github\.com\//, "").replace(/\/$/, "");
+    $("src").innerHTML = `<a class="gh" href="${u}" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/></svg>${name.replace(/[&<>]/g, "")}</a> — код сторінки й інструкція, як зробити таку для свого будинку`;
+  }
 })();
 if (HAS_HOME && !DATA_LOCAL) try { const c = JSON.parse(localStorage.getItem(CACHE)); if (c && c.v === 1) { D = c; render(); } } catch (e) {}
 load();
