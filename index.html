@@ -110,7 +110,7 @@ svg.chart text{font:11px Onest,system-ui,sans-serif;fill:#6B7488}
 .empty{font-size:14px;color:#8F98AA;padding:8px 0}
 footer{margin-top:28px;font-size:13px;line-height:20px;color:#6B7488;max-width:70ch}
 footer a{color:#8F98AA}
-footer #src{display:block;margin-top:10px}.gh{display:inline-flex;align-items:center;gap:6px;color:#DADDE2!important;font-weight:600;text-decoration:none}.gh svg{width:16px;height:16px}.gh:hover{text-decoration:underline}
+footer #src,footer .fl{display:block;margin-top:10px}footer .fl:has(a[hidden]){display:none}.gh[hidden]{display:none}footer .fl+#src{margin-top:4px}.gh{display:inline-flex;align-items:center;gap:6px;color:#DADDE2!important;font-weight:600;text-decoration:none}.gh svg{width:16px;height:16px}.gh:hover{text-decoration:underline}
 .skel{opacity:.4}
 @media (max-width:480px){.hero h1{font-size:28px}.tot{font-size:34px}.kpi{gap:6px}.kpi div{padding:9px 10px}.kpi b{white-space:normal;font-size:15px;line-height:20px}.foot{flex-direction:column;gap:2px}}
 @media (prefers-reduced-motion:reduce){.upd button.spin svg{animation:none}}
@@ -155,6 +155,7 @@ footer #src{display:block;margin-top:10px}.gh{display:inline-flex;align-items:ce
 
   <footer>
     <span id="fnote">Неофіційна сторінка мешканців.</span>
+    <span class="fl"><a class="gh" id="chatF" hidden target="_blank" rel="noopener"><span id="chatFn"></span></a> — чат будинку: новини й обговорення</span>
     <span id="src"><a class="gh" href="https://github.com/kyrylohn/svitlo" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/></svg>kyrylohn/svitlo</a> — код сторінки й інструкція, як зробити таку для свого будинку</span>
   </footer>
 </main>
@@ -561,9 +562,10 @@ document.addEventListener("visibilitychange", () => { if (!document.hidden) load
     a.onclick = () => tclick("chat");
     a.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#2AABEE"/><path fill="#fff" d="M5.4 11.7l11.2-4.3c.5-.2 1 .1.8.9l-1.9 9c-.1.6-.5.8-1 .5l-2.9-2.1-1.4 1.3c-.2.2-.3.3-.6.3l.2-2.9 5.3-4.8c.2-.2 0-.3-.3-.1l-6.6 4.1-2.8-.9c-.6-.2-.6-.6.1-.9z"/></svg>`;
     a.append(C.chatName || "Чат будинку в Telegram");
-    $("fnote").append(" Новини й обговорення — ");
-    const b = document.createElement("a"); b.href = C.chatUrl; b.target = "_blank"; b.rel = "noopener"; b.onclick = () => tclick("chat"); b.textContent = C.chatUrl.replace("https://", "");
-    $("fnote").append(b, ".");
+    const b = $("chatF");
+    b.href = C.chatUrl; b.hidden = false; b.onclick = () => tclick("chat");
+    b.insertAdjacentHTML("afterbegin", `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24zm5.56 8.16-1.97 9.28c-.15.66-.54.82-1.09.51l-3-2.21-1.45 1.39c-.16.16-.29.29-.6.29l.21-3.05 5.56-5.02c.24-.21-.05-.33-.37-.12l-6.87 4.33-2.96-.92c-.64-.2-.66-.64.14-.95l11.57-4.46c.54-.2 1.01.13.83.93z"/></svg>`);
+    $("chatFn").textContent = C.chatUrl.replace(/^https:\/\/t\.me\//, "");
   }
 })();
 if (HAS_HOME && !DATA_LOCAL) try { const c = JSON.parse(localStorage.getItem(CACHE)); if (c && c.v === 1) { D = c; render(); } } catch (e) {}
