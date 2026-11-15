@@ -364,7 +364,7 @@ function stats(now) {
     return `<div class="day${selDay === d.k ? " sel" : ""}" data-k="${d.k}"><div class="h"><b>${DN[d.p.wd]} ${pad(d.p.d)}.${pad(d.p.m)}</b><span>${d.tot ? dur(d.tot) : "без відключень"}</span></div>
       <div class="strip">${d.segs.map((s) => `<i class="${s.t}" style="left:${p2(s.s - d.t0)};width:${p2(s.e - s.s)}"></i>`).join("")}${fut}<i class="g"></i></div></div>`;
   }).join("");
-  document.querySelectorAll(".day").forEach((el) => (el.onclick = () => { selDay = selDay === el.dataset.k ? null : el.dataset.k; render(); }));
+  document.querySelectorAll(".day").forEach((el) => (el.onclick = () => { selDay = selDay === el.dataset.k ? null : el.dataset.k; tclick("day"); render(); }));
   // журнал
   let rows = inP.slice().reverse();
   if (selDay && byKey[selDay]) { const d = byKey[selDay]; rows = rows.filter((x) => x.e > d.t0 && x.s < d.t1); }
@@ -378,7 +378,7 @@ function stats(now) {
     html += `<span class="tm">${hm(x.s)} – ${end}</span><span class="ty"><i style="background:${TYPES[x.t].color}"></i>${TYPES[x.t].name}</span><span class="du">${dur(x.e - x.s)}</span>`;
   }
   $("jr").innerHTML = (vis.length ? `<div class="log">${html}</div>` : '<div class="empty">Відключень не було</div>') + (cut ? `<button class="more" id="more">Показати всі (${rows.length})</button>` : "");
-  if (cut) $("more").onclick = () => { showAll = true; render(); };
+  if (cut) $("more").onclick = () => { showAll = true; tclick("more"); render(); };
 }
 
 function chart(days) {
@@ -404,13 +404,61 @@ function chart(days) {
   });
   svg.setAttribute("viewBox", `0 0 ${W} ${H + 22}`);
   svg.innerHTML = g;
-  svg.querySelectorAll("rect[data-k]").forEach((el) => (el.onclick = () => { selDay = selDay === el.dataset.k ? null : el.dataset.k; render(); }));
+  svg.querySelectorAll("rect[data-k]").forEach((el) => (el.onclick = () => { selDay = selDay === el.dataset.k ? null : el.dataset.k; tclick("day"); render(); }));
 }
 
+/* ---------- чи користуються сторінкою (Worker svitlo-notify → Telegram) ----------
+ * Не збираємо IP чи імена: лише випадковий id у браузері (новий / повторний), звідки прийшли, скільки часу й що натискали.
+ * Свої пристрої: відкрити сторінку з ?me=1 (?me=0 — скасувати). */
+const NOTIFY = ""; // https://svitlo-notify.kyrylohn.workers.dev — вмикається після розгортання Worker
+const TR = { clicks: new Set(), ref: null, visible: 0, since: document.hidden ? 0 : Date.now(), scroll: 0, sent: false };
+const tclick = (c) => TR.clicks.add(c);
+(function track() {
+  const qs = new URLSearchParams(location.search);
+  try {
+    if (qs.get("me") === "1") localStorage.setItem("svitlo-me", "1");
+    if (qs.get("me") === "0") localStorage.removeItem("svitlo-me");
+  } catch (e) {}
+  if (!NOTIFY || navigator.webdriver || /HeadlessChrome/.test(navigator.userAgent)) return;
+  try { if (localStorage.getItem("svitlo-me")) return; } catch (e) {}
+  const store = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) {} };
+  const visitNo = (+store("svitlo-visits") || 0) + 1;
+  store("svitlo-visits", String(visitNo));
+  if (!store("svitlo-first")) store("svitlo-first", new Date().toLocaleDateString("uk-UA", { timeZone: TZ }));
+  const visit = () => ({
+    visitNo, firstSeen: visitNo > 1 ? store("svitlo-first") : "", referrer: document.referrer, from: qs.get("from") || "",
+    openedAt: new Date().toISOString(), state: ($("h1") && $("h1").textContent) || "",
+  });
+  const seconds = () => Math.round((TR.visible + (TR.since ? Date.now() - TR.since : 0)) / 1000);
+  addEventListener("scroll", () => {
+    const h = document.documentElement.scrollHeight - innerHeight;
+    TR.scroll = Math.max(TR.scroll, h > 0 ? Math.round((scrollY / h) * 100) : 100);
+  }, { passive: true });
+  const update = () => {
+    if (!TR.ref) return;
+    const body = JSON.stringify({ ref: TR.ref, visit: visit(), activity: { seconds: seconds(), scroll: TR.scroll, clicks: [...TR.clicks] } });
+    navigator.sendBeacon(NOTIFY + "/update", new Blob([body], { type: "text/plain" }));
+  };
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) { if (TR.since) TR.visible += Date.now() - TR.since; TR.since = 0; update(); }
+    else TR.since = Date.now();
+  });
+  addEventListener("pagehide", update);
+  // відкриття рахуємо, коли сторінку реально видно 3 с (прев'ю посилань і сканери так не роблять)
+  const go = () => {
+    if (TR.sent || document.hidden) return;
+    TR.sent = true;
+    fetch(NOTIFY + "/visit", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ visit: visit() }) })
+      .then((r) => r.json()).then((d) => { if (d && d.ref) TR.ref = d.ref; }).catch(() => {});
+  };
+  const arm = () => setTimeout(() => { if (!document.hidden) go(); else document.addEventListener("visibilitychange", arm, { once: true }); }, 3000);
+  arm();
+})();
+
 /* ---------- події ---------- */
-document.querySelectorAll("#per button").forEach((b) => (b.onclick = () => { period = +b.dataset.p; selDay = null; showAll = false; render(); }));
-document.querySelectorAll("#schedTabs button").forEach((b) => (b.onclick = () => { schedDay = +b.dataset.d; render(); }));
-$("refresh").onclick = () => load(true);
+document.querySelectorAll("#per button").forEach((b) => (b.onclick = () => { period = +b.dataset.p; if (period !== 7) tclick(period ? "p30" : "pall"); selDay = null; showAll = false; render(); }));
+document.querySelectorAll("#schedTabs button").forEach((b) => (b.onclick = () => { schedDay = +b.dataset.d; if (schedDay) tclick("tomorrow"); render(); }));
+$("refresh").onclick = () => { tclick("refresh"); load(true); };
 document.addEventListener("visibilitychange", () => { if (!document.hidden) load(); });
 try { const c = JSON.parse(localStorage.getItem(CACHE)); if (c && c.v === 1) { D = c; render(); } } catch (e) {}
 load();
