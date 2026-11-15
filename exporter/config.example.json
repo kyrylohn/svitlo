@@ -1,0 +1,27 @@
+{
+  "_comment": "Скопіюйте в config.json і змініть значення. config.json у git не потрапляє.",
+  "repo_dir": "~/svitlo-data",
+  "_comment_repo_dir": "Локальний клон цього репозиторію з вибраною гілкою data (orphan).",
+  "branch": "data",
+  "interval": 60,
+  "_comment_interval": "Секунд між перевірками.",
+  "heartbeat_min": 15,
+  "_comment_heartbeat_min": "Пушити принаймні так часто, навіть без змін (сторінка вважає дані застарілими через 20 хв).",
+  "off_after": 3,
+  "_comment_off_after": "Скільки поспіль невдалих перевірок потрібно, щоб оголосити «світла немає».",
+  "on_after": 2,
+  "_comment_on_after": "Скільки поспіль успішних перевірок потрібно, щоб оголосити «світло є».",
+  "min_outage_sec": 60,
+  "_comment_min_outage_sec": "Коротші відключення в журнал не записуються.",
+  "region": "dnipro",
+  "_comment_region": "Файл outage-data-ua: dnipro | kyiv | kyiv-region | odesa.",
+  "group_key": "GPV5.1",
+  "_comment_group_key": "Ключ черги всередині файлу, наприклад GPV1.1, GPV5.1.",
+  "source": {
+    "type": "ping",
+    "host": "192.168.1.50",
+    "count": 2,
+    "timeout": 2
+  },
+  "_comment_source": "Типи: ping (пристрій БЕЗ ДБЖ), http {url,timeout}, command {cmd}, ha {url,entity,token_env}."
+}

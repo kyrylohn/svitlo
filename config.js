@@ -1,0 +1,26 @@
+/* Налаштування сторінки «Світло». Для своєї групи / будинку змініть лише цей файл (і meta-теги в index.html — див. README). */
+window.SVITLO = {
+  // Підписи
+  title: "Світло",
+  group: "5.1",                                   // номер черги / групи — лише для підписів
+  provider: "ДТЕК Дніпровські електромережі",     // хто публікує графік (для підпису внизу)
+
+  // Графік відключень: відкриті дані github.com/Baskerville42/outage-data-ua
+  region: "dnipro",                               // dnipro | kyiv | kyiv-region | odesa
+  groupKey: "GPV5.1",                             // ключ черги у файлі регіону (GPV<черга>.<підчерга>)
+
+  // Стан світла з дому (data.json, який пушить exporter). "" — лише графік, без датчика й статистики.
+  dataUrl: "https://raw.githubusercontent.com/kyrylohn/svitlo/data/data.json",
+  sensorNote: "датчик у щитку будинку",           // звідки береться факт відключення (для підпису внизу)
+
+  // Екстрені відключення (необов'язково; лише якщо ваш exporter заповнює поле avariika)
+  emergencyName: "Дніпро Аварійка",
+
+  // Сповіщення в Telegram, що сторінкою користуються (Worker з папки worker/). "" — вимкнено.
+  notify: "https://svitlo-notify.kyrylohn.workers.dev",
+
+  // Посилання внизу сторінки «Як зробити таку для свого будинку» ("" — не показувати)
+  sourceUrl: "https://github.com/kyrylohn/svitlo",
+
+  tz: "Europe/Kyiv",
+};

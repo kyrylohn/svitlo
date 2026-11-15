@@ -6,4 +6,4 @@ workers_dev = true
 [vars]
 ALLOWED_ORIGINS = "https://kyrylohn.github.io"
 
-# Секрети (ніколи не в репо): BOT_TOKEN, CHAT_ID — розгортання: ~/ha-tools/svitlo_pages/deploy_worker.sh
+# Секрети (ніколи не в репо): BOT_TOKEN, CHAT_ID — `npx wrangler secret put …`, див. README

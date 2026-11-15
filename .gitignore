@@ -1,3 +1,5 @@
 test-data.json
 *.bak*
 .DS_Store
+exporter/config.json
+__pycache__/
