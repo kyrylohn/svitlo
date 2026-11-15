@@ -15,6 +15,7 @@ window.SVITLO = {
 
   // Екстрені відключення (необов'язково; лише якщо ваш exporter заповнює поле avariika)
   emergencyName: "Дніпро Аварійка",
+  emergencyUrl: "https://t.me/dniproavariyka",      // посилання на канал (унизу сторінки й біля «Екстрені до …»)
 
   // Чат будинку в Telegram (посилання під статусом і внизу сторінки). "" — не показувати.
   chatUrl: "https://t.me/pisarz22_22a",

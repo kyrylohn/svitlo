@@ -114,7 +114,8 @@ const CLICK_LABELS = {
   day: 'день у журналі',
   more: 'увесь журнал',
   refresh: 'оновити',
-  chat: 'перейшли в чат будинку'
+  chat: 'перейшли в чат будинку',
+  avariika: 'перейшли в «Дніпро Аварійка»'
 };
 function activityText(activity = {}) {
   const sec = num(activity.seconds, 0, 86400) ?? 0;

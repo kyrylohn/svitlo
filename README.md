@@ -58,7 +58,7 @@
    region: "kyiv",
    groupKey: "GPV3.1",
    dataUrl: "",          // ← обов'язково очистіть, інакше сторінка покаже дані НАШОГО будинку
-   emergencyName: "",
+   emergencyName: "", emergencyUrl: "",
    chatUrl: "https://t.me/<чат_будинку>",   // або "" — кнопка «Чат будинку в Telegram»
    notify: "",           // ← очистіть (це наш бот статистики)
    ```
