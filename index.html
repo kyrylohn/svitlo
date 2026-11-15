@@ -410,7 +410,7 @@ function chart(days) {
 /* ---------- чи користуються сторінкою (Worker svitlo-notify → Telegram) ----------
  * Не збираємо IP чи імена: лише випадковий id у браузері (новий / повторний), звідки прийшли, скільки часу й що натискали.
  * Свої пристрої: відкрити сторінку з ?me=1 (?me=0 — скасувати). */
-const NOTIFY = ""; // https://svitlo-notify.kyrylohn.workers.dev — вмикається після розгортання Worker
+const NOTIFY = "https://svitlo-notify.kyrylohn.workers.dev"; // Worker svitlo-notify (worker/), група «Світло сторінка»
 const TR = { clicks: new Set(), ref: null, visible: 0, since: document.hidden ? 0 : Date.now(), scroll: 0, sent: false };
 const tclick = (c) => TR.clicks.add(c);
 (function track() {
