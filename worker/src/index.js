@@ -113,7 +113,8 @@ const CLICK_LABELS = {
   pall: 'усе',
   day: 'день у журналі',
   more: 'увесь журнал',
-  refresh: 'оновити'
+  refresh: 'оновити',
+  chat: 'перейшли в чат будинку'
 };
 function activityText(activity = {}) {
   const sec = num(activity.seconds, 0, 86400) ?? 0;

@@ -47,6 +47,8 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;-webki
 .hero h1{font-weight:600;font-size:34px;line-height:1.15;letter-spacing:-.02em}
 .hero h1.off{color:#FF6B5E}
 .hero p{margin-top:8px;font-size:16px;line-height:24px;color:#AEB5C3;max-width:62ch}
+.tg{display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:8px 14px 8px 10px;border-radius:999px;background:#262D3B;color:#DADDE2;font-size:14px;font-weight:600;text-decoration:none}
+.tg[hidden]{display:none}.tg:hover{background:#2E3646}.tg svg{width:20px;height:20px;flex:none}
 .grid{display:grid;gap:16px;margin-top:28px}
 @media (min-width:980px){.grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}.wide{grid-column:1/-1}}
 .card{background:#262D3B;border-radius:20px;padding:18px 18px 16px}
@@ -121,7 +123,7 @@ footer #src{display:block;margin-top:10px}.gh{display:inline-flex;align-items:ce
     <div class="upd"><span id="upd">Завантаження…</span><button id="refresh" aria-label="Оновити"><svg viewBox="0 0 24 24" fill="none" stroke="#DADDE2" stroke-width="2" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v4h-4"/></svg></button></div>
   </div>
   <div class="stale" id="stale"></div>
-  <section class="hero skel" id="hero"><h1 id="h1">Світло</h1><p id="hp">Завантажую дані…</p></section>
+  <section class="hero skel" id="hero"><h1 id="h1">Світло</h1><p id="hp">Завантажую дані…</p><a class="tg" id="chat" hidden target="_blank" rel="noopener"></a></section>
 
   <div class="grid">
     <section class="card wide" id="sched">
@@ -162,12 +164,12 @@ footer #src{display:block;margin-top:10px}.gh{display:inline-flex;align-items:ce
 /* Налаштування — у config.js. Для перевірки іншої черги без правок: ?r=kyiv&q=GPV3.1 (лише графік, без даних будинку). */
 const QS = new URLSearchParams(location.search);
 const C = Object.assign({ title: "Світло", group: "", provider: "", region: "", groupKey: "", dataUrl: "", sensorNote: "датчик у будинку",
-  emergencyName: "", notify: "", tz: "Europe/Kyiv" }, window.SVITLO || {});
+  emergencyName: "", notify: "", chatUrl: "", chatName: "Чат будинку в Telegram", tz: "Europe/Kyiv" }, window.SVITLO || {});
 const TRY = /^[\w-]+$/.test(QS.get("r") || "") || /^[\w.]+$/.test(QS.get("q") || "");
 if (TRY) {
   if (/^[\w-]+$/.test(QS.get("r") || "")) C.region = QS.get("r");
   if (/^[\w.]+$/.test(QS.get("q") || "")) { C.groupKey = QS.get("q"); C.group = C.groupKey.replace(/^GPV/, ""); }
-  C.dataUrl = ""; C.provider = ""; C.emergencyName = "";
+  C.dataUrl = ""; C.provider = ""; C.emergencyName = ""; C.chatUrl = "";
 }
 const DATA_LOCAL = QS.get("data"); // лише для тесту: локальний *.json того ж сайту
 const DATA_URL = DATA_LOCAL && /^[\w.-]+\.json$/.test(DATA_LOCAL) ? DATA_LOCAL : C.dataUrl;
@@ -553,6 +555,16 @@ document.addEventListener("visibilitychange", () => { if (!document.hidden) load
   f.push(`Графік — ${[C.provider, grp].filter(Boolean).join(", ") || "відкриті дані outage-data-ua"}.`);
   if (HAS_HOME && C.emergencyName) f.push(`Екстрені відключення — канал «${C.emergencyName}».`);
   $("fnote").textContent = f.join(" ");
+  if (/^https:\/\/t\.me\/[\w+\/-]+$/.test(C.chatUrl)) {
+    const a = $("chat");
+    a.href = C.chatUrl; a.hidden = false;
+    a.onclick = () => tclick("chat");
+    a.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#2AABEE"/><path fill="#fff" d="M5.4 11.7l11.2-4.3c.5-.2 1 .1.8.9l-1.9 9c-.1.6-.5.8-1 .5l-2.9-2.1-1.4 1.3c-.2.2-.3.3-.6.3l.2-2.9 5.3-4.8c.2-.2 0-.3-.3-.1l-6.6 4.1-2.8-.9c-.6-.2-.6-.6.1-.9z"/></svg>`;
+    a.append(C.chatName || "Чат будинку в Telegram");
+    $("fnote").append(" Новини й обговорення — ");
+    const b = document.createElement("a"); b.href = C.chatUrl; b.target = "_blank"; b.rel = "noopener"; b.onclick = () => tclick("chat"); b.textContent = C.chatUrl.replace("https://", "");
+    $("fnote").append(b, ".");
+  }
 })();
 if (HAS_HOME && !DATA_LOCAL) try { const c = JSON.parse(localStorage.getItem(CACHE)); if (c && c.v === 1) { D = c; render(); } } catch (e) {}
 load();

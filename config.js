@@ -16,6 +16,10 @@ window.SVITLO = {
   // Екстрені відключення (необов'язково; лише якщо ваш exporter заповнює поле avariika)
   emergencyName: "Дніпро Аварійка",
 
+  // Чат будинку в Telegram (посилання під статусом і внизу сторінки). "" — не показувати.
+  chatUrl: "https://t.me/pisarz22_22a",
+  chatName: "Чат будинку в Telegram",
+
   // Сповіщення в Telegram, що сторінкою користуються (Worker з папки worker/). "" — вимкнено.
   notify: "https://svitlo-notify.kyrylohn.workers.dev",
 
