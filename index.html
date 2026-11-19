@@ -348,6 +348,8 @@ function hero(now) {
     let s = `Зникло о ${hm(D.pochatok)}${dm(D.pochatok) !== dm(now) ? ` (${dm(D.pochatok)})` : ""}${ty ? `, відключення ${ty}` : ""}.`;
     if (av && av > now) s += ` За «${C.emergencyName || "Аварійка"}» — до ${hm(av)}${D.avariika.mozhlyve_podovzhennia ? " (можливе подовження)" : ""}.`;
     else if (vk && vk > now) s += ` За графіком включення ${when(vk)}.`;
+    const vr = ts(D.vruchnu); // орієнтовний час із повідомлень в інших чатах (вписує власник датчика)
+    if (vr) s += vr > now ? ` За повідомленнями — орієнтовно до ${hm(vr)}.` : ` За повідомленнями мали включити о ${hm(vr)}.`;
     hp.textContent = `${s} ${sh}`;
   } else {
     h1.className = ""; h1.textContent = zh.length ? `Світло є ${dur(now - zh[zh.length - 1].e)}` : "Світло є";
@@ -385,9 +387,10 @@ function sched(now) {
   const av = ts(D.avariika && D.avariika.do);
   let avTxt = "";
   if (!schedDay && D.svitlo === "off" && D.pochatok > 0) {
-    const a = Math.max(0, (D.pochatok - t0) / 60), b = Math.min(1440, ((av && av > now ? av : now) - t0) / 60);
+    const vr = ts(D.vruchnu), until = av && av > now ? av : vr && vr > now ? vr : now;
+    const a = Math.max(0, (D.pochatok - t0) / 60), b = Math.min(1440, (until - t0) / 60);
     if (b > a) html += `<i class="x" style="left:${pct(a)};width:${pct(b - a)}"></i>`;
-    avTxt = av && av > now ? `Екстрені до ${hm(av)}` : D.typ === "e" ? "Екстрене відключення" : "";
+    avTxt = av && av > now ? `Екстрені до ${hm(av)}` : vr && vr > now ? `Орієнтовно до ${hm(vr)} (за повідомленнями)` : D.typ === "e" ? "Екстрене відключення" : "";
   }
   if (!schedDay) {
     const m = (now - t0) / 60;
