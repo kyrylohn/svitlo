@@ -117,7 +117,7 @@ const CLICK_LABELS = {
   chat: 'перейшли в чат будинку',
   avariika: 'перейшли в «Дніпро Аварійка»',
   contact: '💼 написали автору (налаштувати свій)',
-  donate: '☕ Buy Me a Coffee'
+  donate: '💛 перейшли підтримати (Base by mono)'
 };
 function activityText(activity = {}) {
   const sec = num(activity.seconds, 0, 86400) ?? 0;
