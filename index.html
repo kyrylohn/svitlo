@@ -133,7 +133,7 @@ svg.chart text{font:11px Onest,system-ui,sans-serif;fill:#8C94A6}
 .rpb{display:flex;gap:8px}
 .rpb button{flex:1;height:40px;border-radius:10px;font-weight:600;font-size:14px}
 .rpb .pri{background:#9A7CFF;color:#fff}.rpb .pri:hover{background:#A98EFF}
-.rpb .gh{background:#2E3545;color:#DADDE2}
+.rpb .sec{background:#2E3545;color:#DADDE2}.rpb .sec:hover{background:#38404F}
 .empty{font-size:14px;color:#8F98AA;padding:8px 0}
 footer{margin-top:28px;font-size:13px;line-height:20px;color:#8C94A6;max-width:70ch}
 footer a{color:#8F98AA}
@@ -752,7 +752,7 @@ function rpRender() {
     <div class="rpf"><label>Від<input id="rpA" inputmode="decimal" autocomplete="off" placeholder="дд.мм.рррр"></label>
     <label>До<input id="rpB" inputmode="decimal" autocomplete="off" placeholder="дд.мм.рррр"></label>
     <p class="rpe" id="rpE" aria-live="polite"></p>
-    <div class="rpb"><button class="gh" id="rpX">Скасувати</button><button class="pri" id="rpOk">Застосувати</button></div></div>`;
+    <div class="rpb"><button class="sec" id="rpX">Скасувати</button><button class="pri" id="rpOk">Застосувати</button></div></div>`;
   rpFields(); rpCal();
   const typed = (id, key) => {
     const v = $(id).value.trim();
