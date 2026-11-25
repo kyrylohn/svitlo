@@ -106,7 +106,8 @@ svg.chart text{font:11px Onest,system-ui,sans-serif;fill:#8C94A6}
 .log .ty{font-size:13px;color:#8F98AA;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .log .ty i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px}
 .log small{color:#8C94A6}
-.live{color:#FF6B5E}
+.live{color:#FF6B5E}.live.ok{color:#7FD49B}
+#jrTabs{margin:12px 0 0;max-width:320px}
 .more{width:100%;height:40px;margin-top:12px;border-radius:10px;background:#2E3545;font-weight:500;font-size:14px}
 .empty{font-size:14px;color:#8F98AA;padding:8px 0}
 footer{margin-top:28px;font-size:13px;line-height:20px;color:#8C94A6;max-width:70ch}
@@ -212,7 +213,7 @@ a{text-underline-offset:3px}
       <section class="card"><h2>Календар <em id="calSub"></em></h2><div class="cal" id="cal"></div>
         <div class="calk"><span>0 год</span><i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i><span>12+ год без світла</span></div></section>
       <section class="card"><h2>По днях <em>0 · 6 · 12 · 18 · 24</em></h2><div id="days"></div></section>
-      <section class="card"><h2>Журнал <em id="jrSub"></em></h2><div id="jr"></div></section>
+      <section class="card"><h2>Журнал <em id="jrSub"></em></h2><div class="tabs" id="jrTabs" role="tablist" aria-label="Що показати в журналі"><button data-m="off" role="tab">Без світла</button><button data-m="on" role="tab">Зі світлом</button></div><div id="jr"></div></section>
     </div>
   </div>
 
@@ -286,7 +287,7 @@ const nowS = () => Date.now() / 1000;
 const ts = (iso) => (iso ? Date.parse(iso) / 1000 : null);
 
 /* ---------- стан ---------- */
-let D = null, period = 7, selDay = null, showAll = false, schedDay = 0, lastFetchOk = 0;
+let D = null, period = 7, selDay = null, showAll = false, jrMode = "off", schedDay = 0, lastFetchOk = 0;
 const fixed = (x) => (x == null ? null : x);
 
 /* ---------- завантаження ---------- */
@@ -617,18 +618,32 @@ function stats(now) {
   }).join("");
   document.querySelectorAll(".day").forEach((el) => (el.onclick = () => { selDay = selDay === el.dataset.k ? null : el.dataset.k; tclick("day"); render(); }));
   // журнал
-  let rows = inP.slice().reverse();
+  const ON = jrMode === "on";
+  document.querySelectorAll("#jrTabs button").forEach((b) => { b.classList.toggle("on", b.dataset.m === jrMode); b.setAttribute("aria-selected", b.dataset.m === jrMode); });
+  let src = inP;
+  if (ON) {
+    // проміжки зі світлом між відключеннями (до першого запису журналу — невідомо)
+    src = [];
+    for (let i = 0; i < list.length; i++) {
+      const a = list[i], b = list[i + 1];
+      if (a.live) continue;
+      const x = { s: a.e, e: b ? b.s : now, live: !b };
+      if (x.e - x.s >= 60 && x.e > F) src.push(x);
+    }
+  }
+  const dayTot = (d) => (ON ? Math.max(0, Math.min(d.t1, now) - d.t0 - d.tot) : d.tot);
+  let rows = src.slice().reverse();
   if (selDay && byKey[selDay]) { const d = byKey[selDay]; rows = rows.filter((x) => x.e > d.t0 && x.s < d.t1); }
   const LIM = 12, cut = !showAll && !selDay && rows.length > LIM, vis = cut ? rows.slice(0, LIM) : rows;
   $("jrSub").textContent = selDay && byKey[selDay] ? `${pad(byKey[selDay].p.d)}.${pad(byKey[selDay].p.m)} · тап по дню — скинути` : `${rows.length} ${plural(rows.length, "запис", "записи", "записів")}`;
   let html = "", lastK = "";
   for (const x of vis) {
     const p = kp(x.s), k = `${p.y}-${p.m}-${p.d}`;
-    if (k !== lastK) { html += `<div class="d"><span>${DN[p.wd]} ${dm(x.s)}</span><span>${byKey[k] ? dur(byKey[k].tot) : ""}</span></div>`; lastK = k; }
-    const end = x.live ? '<span class="live">триває</span>' : `${hm(x.e)}${dm(x.e) !== dm(x.s) ? ` <small>${dm(x.e)}</small>` : ""}`;
-    html += `<span class="tm">${hm(x.s)} – ${end}</span><span class="ty"><i style="background:${TYPES[x.t].color}"></i>${TYPES[x.t].name}</span><span class="du">${dur(x.e - x.s)}</span>`;
+    if (k !== lastK) { html += `<div class="d"><span>${DN[p.wd]} ${dm(x.s)}</span><span>${byKey[k] ? (ON ? `світло ${dur(dayTot(byKey[k]))}` : dur(byKey[k].tot)) : ""}</span></div>`; lastK = k; }
+    const end = x.live ? `<span class="live${ON ? " ok" : ""}">триває</span>` : `${hm(x.e)}${dm(x.e) !== dm(x.s) ? ` <small>${dm(x.e)}</small>` : ""}`;
+    html += `<span class="tm">${hm(x.s)} – ${end}</span><span class="ty">${ON ? '<i style="background:#7FD49B"></i>Світло є' : `<i style="background:${TYPES[x.t].color}"></i>${TYPES[x.t].name}`}</span><span class="du">${dur(x.e - x.s)}</span>`;
   }
-  $("jr").innerHTML = (vis.length ? `<div class="log">${html}</div>` : '<div class="empty">Відключень не було</div>') + (cut ? `<button class="more" id="more">Показати всі (${rows.length})</button>` : "");
+  $("jr").innerHTML = (vis.length ? `<div class="log">${html}</div>` : `<div class="empty">${ON ? "Немає даних" : "Відключень не було"}</div>`) + (cut ? `<button class="more" id="more">Показати всі (${rows.length})</button>` : "");
   if (cut) $("more").onclick = () => { showAll = true; tclick("more"); render(); };
 }
 
@@ -773,6 +788,7 @@ const tclick = (c) => TR.clicks.add(c);
 })();
 
 /* ---------- події ---------- */
+document.querySelectorAll("#jrTabs button").forEach((b) => (b.onclick = () => { if (jrMode === b.dataset.m) return; jrMode = b.dataset.m; showAll = false; tclick(jrMode === "on" ? "jr_on" : "jr_off"); render(); }));
 document.querySelectorAll("#per button").forEach((b) => (b.onclick = () => { period = +b.dataset.p; if (period !== 7) tclick(period ? "p30" : "pall"); selDay = null; showAll = false; intro(); render(); }));
 document.querySelectorAll("#schedTabs button").forEach((b) => (b.onclick = () => { schedDay = +b.dataset.d; if (schedDay) tclick("tomorrow"); render(); }));
 $("refresh").onclick = () => { tclick("refresh"); load(true); };
