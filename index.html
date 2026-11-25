@@ -107,8 +107,32 @@ svg.chart text{font:11px Onest,system-ui,sans-serif;fill:#8C94A6}
 .log .ty i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px}
 .log small{color:#8C94A6}
 .live{color:#FF6B5E}.live.ok{color:#7FD49B}
-.jbar{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0}.jbar .tabs{margin:0;flex:1 1 220px;max-width:320px}
+#jrTabs{margin:12px 0 0;max-width:320px}
 .more{width:100%;height:40px;margin-top:12px;border-radius:10px;background:#2E3545;font-weight:500;font-size:14px}
+#per button svg{width:14px;height:14px;vertical-align:-2px;margin-right:4px}
+.rp{margin:-8px 0 16px;padding:14px;border-radius:14px;background:#1A1F29;display:grid;gap:14px}
+.rp[hidden]{display:none}
+@media (min-width:560px){.rp{grid-template-columns:auto 1fr;align-items:start}}
+.rph{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.rph b{font-weight:600;font-size:15px}
+.rph button{width:32px;height:32px;border-radius:8px;color:#DADDE2;font-size:18px}.rph button:hover:not(:disabled){background:#2E3545}.rph button:disabled{opacity:.3}
+.rpg{display:grid;grid-template-columns:repeat(7,36px);gap:2px;justify-content:center}
+.rpg .w{font-size:12px;color:#8F98AA;text-align:center;line-height:24px}
+.rpg button{height:34px;border-radius:8px;font-size:14px;color:#DADDE2}
+.rpg button:hover:not(:disabled){background:#2E3545}
+.rpg button:disabled{color:#4A5266;cursor:default}
+.rpg button.td{box-shadow:inset 0 0 0 1px #4A5266}
+.rpg button.in{background:rgba(154,124,255,.18);border-radius:0}
+.rpg button.ed{background:#9A7CFF;color:#fff;border-radius:8px}
+.rpf{display:grid;gap:10px;align-content:start}
+.rpf label{display:grid;gap:6px;font-size:13px;color:#8F98AA}
+.rpf input{height:40px;padding:0 12px;border-radius:10px;border:1px solid #3A4254;background:#262D3B;color:#DADDE2;font:inherit;font-size:15px;width:100%}
+.rpf input:focus{outline:none;border-color:#9A7CFF}
+.rpe{min-height:16px;font-size:13px;color:#FF9A6B}
+.rpb{display:flex;gap:8px}
+.rpb button{flex:1;height:40px;border-radius:10px;font-weight:600;font-size:14px}
+.rpb .pri{background:#9A7CFF;color:#fff}.rpb .pri:hover{background:#A98EFF}
+.rpb .gh{background:#2E3545;color:#DADDE2}
 .empty{font-size:14px;color:#8F98AA;padding:8px 0}
 footer{margin-top:28px;font-size:13px;line-height:20px;color:#8C94A6;max-width:70ch}
 footer a{color:#8F98AA}
@@ -193,7 +217,8 @@ a{text-underline-offset:3px}
 
     <div class="col" id="statsCol">
     <section class="card" id="statsCard">
-      <div class="tabs" id="per" role="tablist" aria-label="Період статистики"><button role="tab" data-p="7" class="on">7 днів</button><button role="tab" data-p="30">30 днів</button><button role="tab" data-p="0">Усе</button></div>
+      <div class="tabs" id="per" role="tablist" aria-label="Період статистики"><button role="tab" data-p="7" class="on">7 днів</button><button role="tab" data-p="30">30 днів</button><button role="tab" data-p="0">Усе</button><button role="tab" data-p="-1" id="perC" aria-haspopup="dialog"></button></div>
+      <div class="rp" id="rp" role="dialog" aria-label="Вибір періоду" hidden></div>
       <div class="lbl">Без світла</div>
       <div class="totw"><div class="tot" id="tot">—</div><span class="dl" id="dl" hidden></span></div>
       <div class="sub" id="sub"></div>
@@ -213,7 +238,7 @@ a{text-underline-offset:3px}
       <section class="card"><h2>Календар <em id="calSub"></em></h2><div class="cal" id="cal"></div>
         <div class="calk"><span>0 год</span><i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i><span>12+ год без світла</span></div></section>
       <section class="card"><h2>По днях <em>0 · 6 · 12 · 18 · 24</em></h2><div id="days"></div></section>
-      <section class="card"><h2>Журнал <em id="jrSub"></em></h2><div class="jbar"><div class="tabs" id="jrTabs" role="tablist" aria-label="Що показати в журналі"><button data-m="off" role="tab">Без світла</button><button data-m="on" role="tab">Зі світлом</button></div><div class="tabs" id="jrPer" role="tablist" aria-label="Період журналу"><button data-p="7" role="tab">7 днів</button><button data-p="30" role="tab">30 днів</button><button data-p="0" role="tab">Усе</button></div></div><div id="jr"></div></section>
+      <section class="card"><h2>Журнал <em id="jrSub"></em></h2><div class="tabs" id="jrTabs" role="tablist" aria-label="Що показати в журналі"><button data-m="off" role="tab">Без світла</button><button data-m="on" role="tab">Зі світлом</button></div><div id="jr"></div></section>
     </div>
   </div>
 
@@ -287,7 +312,7 @@ const nowS = () => Date.now() / 1000;
 const ts = (iso) => (iso ? Date.parse(iso) / 1000 : null);
 
 /* ---------- стан ---------- */
-let D = null, period = 7, jrPeriod = 7, selDay = null, showAll = false, jrMode = "off", schedDay = 0, lastFetchOk = 0;
+let D = null, period = 7, rng = null, rp = null, selDay = null, showAll = false, jrMode = "off", schedDay = 0, lastFetchOk = 0;
 const fixed = (x) => (x == null ? null : x);
 
 /* ---------- завантаження ---------- */
@@ -544,16 +569,21 @@ function byHour(days, now) {
 }
 const hRange = (h) => `${pad(h)}:00–${pad((h + 4) % 24 || 24)}:00`;
 
+/* межі вибраного періоду: F — початок (північ), E — північ останнього дня, T — кінець (не пізніше «зараз») */
+function bounds(list, now) {
+  const tp = kp(now), todayMid = kMid(tp.y, tp.m, tp.d);
+  const fp = list.length ? kp(list[0].s) : tp, firstMid = kMid(fp.y, fp.m, fp.d);
+  if (period === -1 && rng) { const p = kp(rng.b); return { F: rng.a, E: rng.b, T: Math.min(now, kMid(p.y, p.m, p.d + 1)), n: Math.round((kMid(p.y, p.m, p.d + 1) - rng.a) / 86400) }; }
+  if (period > 0) return { F: kMid(tp.y, tp.m, tp.d - (period - 1)), E: todayMid, T: now, n: period };
+  return { F: firstMid, E: todayMid, T: now, n: 0 };
+}
+
 function stats(now) {
   const list = journal();
-  document.querySelectorAll("#per button").forEach((b) => { b.classList.toggle("on", +b.dataset.p === period); b.setAttribute("aria-selected", +b.dataset.p === period); });
-  const tp = kp(now);
-  const todayMid = kMid(tp.y, tp.m, tp.d);
-  const firstP = list.length ? kp(list[0].s) : tp;
-  const firstMid = kMid(firstP.y, firstP.m, firstP.d);
-  let F = period ? kMid(tp.y, tp.m, tp.d - (period - 1)) : firstMid;
-  const days = buildDays(list, F, todayMid);
-  const inP = list.filter((x) => x.e > F);
+  perTabs();
+  const { F, E, T, n: pn } = bounds(list, now);
+  const days = buildDays(list, F, E);
+  const inP = list.filter((x) => x.e > F && x.s < T);
   const span = Math.max(1, Math.min(now, days[days.length - 1].t1) - F);
   const tot = days.reduce((a, d) => a + d.tot, 0), n = inP.length;
   const live = list.some((x) => x.live);
@@ -561,27 +591,27 @@ function stats(now) {
   // динаміка: середнє за добу проти такого ж попереднього періоду (лише якщо журнал його покриває)
   const dl = $("dl");
   let dk = "", dt = "", dtt = "";
-  if (period && list.length && list[0].s <= F - period * 86400) {
-    const A = F - period * 86400;
+  if (pn && list.length && list[0].s <= F - pn * 86400) {
+    const A = F - pn * 86400;
     let prev = 0;
     for (const x of list) { const a = Math.max(x.s, A), b = Math.min(x.e, F); if (b > a) prev += b - a; }
-    const cur = tot / (span / 86400), prv = prev / period, f1 = (v) => (v / 3600).toFixed(1).replace(".", ",");
+    const cur = tot / (span / 86400), prv = prev / pn, f1 = (v) => (v / 3600).toFixed(1).replace(".", ",");
     const AR = (up) => `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${up ? "M4 10l4-4 4 4" : "M4 6l4 4 4-4"}"/></svg>`;
     if (prv >= 60) {
       const pct = Math.round(((cur - prv) / prv) * 100);
-      dtt = `Середньо без світла за добу: ${f1(cur)} год, у попередні ${period} днів — ${f1(prv)} год`;
-      if (Math.abs(pct) < 3) { dk = "same"; dt = `≈ як попередні ${period} днів`; }
-      else { dk = pct < 0 ? "good" : "bad"; dt = `${AR(pct > 0)}${pct > 0 ? "+" : "−"}${Math.abs(pct)}% до попередніх ${period} днів`; }
-    } else if (cur >= 60) { dk = "bad"; dt = `${AR(true)}попередні ${period} днів — без відключень`; }
+      dtt = `Середньо без світла за добу: ${f1(cur)} год, у попередні ${pn} ${plural(pn, "день", "дні", "днів")} — ${f1(prv)} год`;
+      if (Math.abs(pct) < 3) { dk = "same"; dt = `≈ як попередні ${pn} ${plural(pn, "день", "дні", "днів")}`; }
+      else { dk = pct < 0 ? "good" : "bad"; dt = `${AR(pct > 0)}${pct > 0 ? "+" : "−"}${Math.abs(pct)}% до попередніх ${pn} ${plural(pn, "дня", "днів", "днів")}`; }
+    } else if (cur >= 60) { dk = "bad"; dt = `${AR(true)}попередні ${pn} ${plural(pn, "день", "дні", "днів")} — без відключень`; }
   }
   dl.hidden = !dk; dl.className = `dl ${dk}`; dl.title = dtt;
   if (dk) setHTML(dl, dt);
   $("sub").textContent = n ? `${Math.round((tot / span) * 100)} % часу · ${n} ${plural(n, "відключення", "відключення", "відключень")}${live ? " · зараз світла немає" : ""}` : "Відключень не було";
   let longest = null;
-  for (const x of inP) { const s = Math.max(x.s, F), e = Math.min(x.e, now); if (!longest || e - s > longest.e - longest.s) longest = { s, e, live: x.live }; }
+  for (const x of inP) { const s = Math.max(x.s, F), e = Math.min(x.e, T); if (!longest || e - s > longest.e - longest.s) longest = { s, e, live: x.live }; }
   let gap = null, prevE = F;
   for (const x of inP) { if (x.s - prevE > (gap ? gap.e - gap.s : 0)) gap = { s: prevE, e: x.s }; prevE = Math.max(prevE, x.e); }
-  if (!live && now - prevE > (gap ? gap.e - gap.s : 0)) gap = { s: prevE, e: now, live: true };
+  if ((T < now || !live) && T - prevE > (gap ? gap.e - gap.s : 0)) gap = { s: prevE, e: T, live: T >= now };
   const fullDays = Math.max(1, span / 86400);
   const kd = (x) => (x ? `${DN[kp(x.s).wd]} ${dm(x.s)}${x.live ? " · триває" : ""}` : "—");
   // міні-графіки: по днях (не більше 30 останніх) — найдовше відключення, найдовше світло, сума
@@ -620,11 +650,7 @@ function stats(now) {
   // журнал
   const ON = jrMode === "on";
   document.querySelectorAll("#jrTabs button").forEach((b) => { b.classList.toggle("on", b.dataset.m === jrMode); b.setAttribute("aria-selected", b.dataset.m === jrMode); });
-  const jpOn = (b) => !selDay && +b.dataset.p === jrPeriod;
-  document.querySelectorAll("#jrPer button").forEach((b) => { b.classList.toggle("on", jpOn(b)); b.setAttribute("aria-selected", jpOn(b)); });
-  // власний період журналу (вибраний день його перекриває)
-  const FJ = selDay ? 0 : jrPeriod ? kMid(tp.y, tp.m, tp.d - (jrPeriod - 1)) : 0;
-  let src = list.filter((x) => x.e > FJ);
+  let src = inP;
   if (ON) {
     // проміжки зі світлом між відключеннями (до першого запису журналу — невідомо)
     src = [];
@@ -632,20 +658,18 @@ function stats(now) {
       const a = list[i], b = list[i + 1];
       if (a.live) continue;
       const x = { s: a.e, e: b ? b.s : now, live: !b };
-      if (x.e - x.s >= 60 && x.e > FJ) src.push(x);
+      if (x.e - x.s >= 60 && x.e > F) src.push(x);
     }
   }
-  // підсумок дня з усього журналу (день може бути поза загальним періодом)
-  const dayOff = (t0, t1) => list.reduce((a, x) => a + Math.max(0, Math.min(x.e, t1) - Math.max(x.s, t0)), 0);
-  const dayTot = (t0, t1) => (ON ? Math.max(0, Math.min(t1, now) - t0 - dayOff(t0, t1)) : dayOff(t0, t1));
+  const dayTot = (d) => (ON ? Math.max(0, Math.min(d.t1, now) - d.t0 - d.tot) : d.tot);
   let rows = src.slice().reverse();
   if (selDay && byKey[selDay]) { const d = byKey[selDay]; rows = rows.filter((x) => x.e > d.t0 && x.s < d.t1); }
-  const LIM = 12, fold = !selDay && !jrPeriod && rows.length > LIM, cut = fold && !showAll, vis = cut ? rows.slice(0, LIM) : rows;
+  const LIM = 12, fold = period === 0 && !selDay && rows.length > LIM, cut = fold && !showAll, vis = cut ? rows.slice(0, LIM) : rows;
   $("jrSub").textContent = selDay && byKey[selDay] ? `${pad(byKey[selDay].p.d)}.${pad(byKey[selDay].p.m)} · тап по дню — скинути` : `${rows.length} ${plural(rows.length, "запис", "записи", "записів")}`;
   let html = "", lastK = "";
   for (const x of vis) {
     const p = kp(x.s), k = `${p.y}-${p.m}-${p.d}`;
-    if (k !== lastK) { const t0 = kMid(p.y, p.m, p.d), t1 = kMid(p.y, p.m, p.d + 1); html += `<div class="d"><span>${DN[p.wd]} ${dm(x.s)}</span><span>${(ON ? "світло " : "") + dur(dayTot(t0, t1))}</span></div>`; lastK = k; }
+    if (k !== lastK) { html += `<div class="d"><span>${DN[p.wd]} ${dm(x.s)}</span><span>${byKey[k] ? (ON ? `світло ${dur(dayTot(byKey[k]))}` : dur(byKey[k].tot)) : ""}</span></div>`; lastK = k; }
     const end = x.live ? `<span class="live${ON ? " ok" : ""}">триває</span>` : `${hm(x.e)}${dm(x.e) !== dm(x.s) ? ` <small>${dm(x.e)}</small>` : ""}`;
     html += `<span class="tm">${hm(x.s)} – ${end}</span><span class="ty">${ON ? '<i style="background:#7FD49B"></i>Світло є' : `<i style="background:${TYPES[x.t].color}"></i>${TYPES[x.t].name}`}</span><span class="du">${dur(x.e - x.s)}</span>`;
   }
@@ -656,7 +680,7 @@ function stats(now) {
 /* «Коли найчастіше без світла»: 24 стовпчики, найгірше 4-годинне вікно — червоним */
 function hours(days, now) {
   const H = byHour(days, now);
-  $("hrSub").textContent = period ? `за ${period} днів` : "за весь час";
+  $("hrSub").textContent = period === -1 && rng ? `за ${rngLabel()}` : period ? `за ${period} днів` : "за весь час";
   $("pkT").textContent = H.off >= 60 ? hRange(H.peak) : "—";
   $("pkS").textContent = H.off >= 60 ? `найгірший проміжок · ${Math.round(H.peakShare * 100)} % часу без світла` : "відключень не було";
   const mx = Math.max(0.01, ...H.sh), bw = 340 / 24;
@@ -687,8 +711,94 @@ function calendar(list, now) {
   el.querySelectorAll("button[data-k]:not([disabled])").forEach((b) => (b.onclick = () => {
     const k = b.dataset.k; tclick("cal");
     if (selDay === k) selDay = null;
-    else { const d = days.find((x) => x.k === k); if (period && d && d.t0 < kMid(tp.y, tp.m, tp.d - (period - 1))) period = 0; selDay = k; }
+    else { const d = days.find((x) => x.k === k), B = bounds(list, now); if (period && d && (d.t0 < B.F || d.t0 > B.E)) period = 0; selDay = k; }
     render();
+  }));
+}
+
+/* свій період, як absolute time range у Grafana: календар (два кліки — початок і кінець) + поля «Від / До» */
+const MNOM = ["Січень", "Лютий", "Березень", "Квітень", "Травень", "Червень", "Липень", "Серпень", "Вересень", "Жовтень", "Листопад", "Грудень"];
+const CAL_I = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><rect x="2.5" y="3.5" width="11" height="10" rx="2"/><path d="M2.5 7h11M5.5 2v3M10.5 2v3"/></svg>';
+const fmtD = (t) => { const p = kp(t); return `${pad(p.d)}.${pad(p.m)}.${p.y}`; };
+const rngLabel = () => (rng.a === rng.b ? dm(rng.a) : `${dm(rng.a)}–${dm(rng.b)}`);
+function parseD(v) { // дд.мм.рррр, дд.мм.рр або дд.мм (поточний рік)
+  const m = String(v).trim().match(/^(\d{1,2})[.\/-](\d{1,2})(?:[.\/-](\d{2}|\d{4}))?$/);
+  if (!m) return null;
+  const y = m[3] ? (m[3].length === 2 ? 2000 + +m[3] : +m[3]) : kp(nowS()).y, t = kMid(y, +m[2], +m[1]), p = kp(t);
+  return p.d === +m[1] && p.m === +m[2] ? t : null;
+}
+function rpLimits() {
+  const list = journal(), tp = kp(nowS()), hi = kMid(tp.y, tp.m, tp.d);
+  const fp = list.length ? kp(list[0].s) : tp;
+  return { lo: kMid(fp.y, fp.m, fp.d), hi };
+}
+function perTabs() {
+  const isOn = (b) => (rp ? +b.dataset.p === -1 : +b.dataset.p === period);
+  document.querySelectorAll("#per button").forEach((b) => { b.classList.toggle("on", isOn(b)); b.setAttribute("aria-selected", isOn(b)); });
+  setHTML($("perC"), CAL_I + (period === -1 && rng ? rngLabel() : "Період"));
+  $("perC").setAttribute("aria-expanded", !!rp);
+}
+function rpOpen() {
+  const { hi } = rpLimits(), p = kp(rng ? rng.b : hi);
+  rp = { a: rng ? rng.a : null, b: rng ? rng.b : null, y: p.y, m: p.m };
+}
+function rpRender() {
+  const el = $("rp");
+  if (!rp) { el.hidden = true; el.innerHTML = ""; return; }
+  el.hidden = false;
+  // каркас малюється раз на відкриття; далі оновлюються лише календар, поля й помилка
+  el.innerHTML = `<div id="rpCal"></div>
+    <div class="rpf"><label>Від<input id="rpA" inputmode="decimal" autocomplete="off" placeholder="дд.мм.рррр"></label>
+    <label>До<input id="rpB" inputmode="decimal" autocomplete="off" placeholder="дд.мм.рррр"></label>
+    <p class="rpe" id="rpE" aria-live="polite"></p>
+    <div class="rpb"><button class="gh" id="rpX">Скасувати</button><button class="pri" id="rpOk">Застосувати</button></div></div>`;
+  rpFields(); rpCal();
+  const typed = (id, key) => {
+    const v = $(id).value.trim();
+    if (!v && key === "b") { rp.b = null; rpCal(); return; }
+    const t = parseD(v);
+    if (t == null) return; // помилку покаже «Застосувати»
+    rp[key] = t; if (rp.a != null && rp.b != null && rp.b < rp.a) [rp.a, rp.b] = [rp.b, rp.a];
+    const q = kp(t); rp.y = q.y; rp.m = q.m; $("rpE").textContent = ""; rpCal();
+  };
+  $("rpA").oninput = () => typed("rpA", "a");
+  $("rpB").oninput = () => typed("rpB", "b");
+  el.querySelectorAll("input").forEach((x) => (x.onkeydown = (e) => { if (e.key === "Enter") $("rpOk").click(); }));
+  $("rpX").onclick = () => { rp = null; rpRender(); perTabs(); };
+  $("rpOk").onclick = () => {
+    const { lo, hi } = rpLimits();
+    let A = parseD($("rpA").value), B = $("rpB").value.trim() ? parseD($("rpB").value) : A;
+    if (A == null || B == null) { $("rpE").textContent = "Дата у форматі дд.мм.рррр"; return; }
+    if (B < A) [A, B] = [B, A];
+    if (B < lo || A > hi) { $("rpE").textContent = `Журнал є з ${fmtD(lo)} до ${fmtD(hi)}`; return; }
+    rng = { a: Math.max(A, lo), b: Math.min(B, hi) };
+    period = -1; rp = null; selDay = null; showAll = false; tclick("prange");
+    rpRender(); intro(); render();
+  };
+}
+function rpFields() { // поля з вибраних у календарі дат
+  const a = rp.a, b = rp.b;
+  $("rpA").value = a != null ? fmtD(a) : "";
+  $("rpB").value = b != null ? fmtD(b) : "";
+}
+function rpCal() {
+  const { lo, hi } = rpLimits(), { y, m } = rp;
+  const wd0 = (kp(kMid(y, m, 1)).wd + 6) % 7, nd = kp(kMid(y, m + 1, 0)).d;
+  const a = rp.a, b = rp.b ?? rp.a;
+  let g = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"].map((x) => `<span class="w">${x}</span>`).join("") + "<span></span>".repeat(wd0);
+  for (let d = 1; d <= nd; d++) {
+    const t = kMid(y, m, d), off = t < lo || t > hi;
+    const inR = a != null && t >= a && t <= b, ed = t === a || t === rp.b;
+    g += `<button data-t="${t}" class="${inR ? "in" : ""}${ed ? " ed" : ""}${t === hi ? " td" : ""}"${off ? " disabled" : ""} aria-label="${fmtD(t)}"${ed ? ' aria-pressed="true"' : ""}>${d}</button>`;
+  }
+  const canP = kMid(y, m, 0) >= lo, canN = kMid(y, m + 1, 1) <= hi;
+  const el = $("rpCal");
+  el.innerHTML = `<div class="rph"><button data-n="-1"${canP ? "" : " disabled"} aria-label="Попередній місяць">‹</button><b>${MNOM[m - 1]} ${y}</b><button data-n="1"${canN ? "" : " disabled"} aria-label="Наступний місяць">›</button></div><div class="rpg">${g}</div>`;
+  el.querySelectorAll(".rph button").forEach((x) => (x.onclick = () => { const q = kp(kMid(rp.y, rp.m + +x.dataset.n, 1)); rp.y = q.y; rp.m = q.m; rpCal(); }));
+  el.querySelectorAll(".rpg button").forEach((x) => (x.onclick = () => {
+    const t = +x.dataset.t;
+    if (rp.a == null || rp.b != null) { rp.a = t; rp.b = null; } else { rp.b = t; if (rp.b < rp.a) [rp.a, rp.b] = [rp.b, rp.a]; }
+    $("rpE").textContent = ""; rpFields(); rpCal();
   }));
 }
 
@@ -794,9 +904,13 @@ const tclick = (c) => TR.clicks.add(c);
 })();
 
 /* ---------- події ---------- */
-document.querySelectorAll("#jrPer button").forEach((b) => (b.onclick = () => { jrPeriod = +b.dataset.p; selDay = null; showAll = false; render(); }));
 document.querySelectorAll("#jrTabs button").forEach((b) => (b.onclick = () => { if (jrMode === b.dataset.m) return; jrMode = b.dataset.m; showAll = false; tclick(jrMode === "on" ? "jr_on" : "jr_off"); render(); }));
-document.querySelectorAll("#per button").forEach((b) => (b.onclick = () => { period = +b.dataset.p; jrPeriod = period; if (period !== 7) tclick(period ? "p30" : "pall"); selDay = null; showAll = false; intro(); render(); }));
+document.querySelectorAll("#per button").forEach((b) => (b.onclick = () => {
+  const p = +b.dataset.p;
+  if (p === -1) { rp ? (rp = null) : rpOpen(); rpRender(); perTabs(); return; }
+  rp = null; rpRender();
+  period = p; if (period !== 7) tclick(period ? "p30" : "pall"); selDay = null; showAll = false; intro(); render();
+}));
 document.querySelectorAll("#schedTabs button").forEach((b) => (b.onclick = () => { schedDay = +b.dataset.d; if (schedDay) tclick("tomorrow"); render(); }));
 $("refresh").onclick = () => { tclick("refresh"); load(true); };
 document.addEventListener("visibilitychange", () => { if (!document.hidden) load(); });
