@@ -122,6 +122,7 @@ svg.chart text{font:11px Onest,system-ui,sans-serif;fill:#8C94A6}
 .rpg button:hover:not(:disabled){background:#2E3545}
 .rpg button:disabled{color:#4A5266;cursor:default}
 .rpg button.td{box-shadow:inset 0 0 0 1px #4A5266}
+.rpg button.nd:not(.in):not(.ed){color:#6B7488}
 .rpg button.in{background:rgba(154,124,255,.18);border-radius:0}
 .rpg button.ed{background:#9A7CFF;color:#fff;border-radius:8px}
 .rpf{display:grid;gap:10px;align-content:start}
@@ -787,11 +788,11 @@ function rpCal() {
   const a = rp.a, b = rp.b ?? rp.a;
   let g = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"].map((x) => `<span class="w">${x}</span>`).join("") + "<span></span>".repeat(wd0);
   for (let d = 1; d <= nd; d++) {
-    const t = kMid(y, m, d), off = t < lo || t > hi;
+    const t = kMid(y, m, d), off = t > hi, nd = t < lo; // до початку журналу — можна вибрати, але приглушено
     const inR = a != null && t >= a && t <= b, ed = t === a || t === rp.b;
-    g += `<button data-t="${t}" class="${inR ? "in" : ""}${ed ? " ed" : ""}${t === hi ? " td" : ""}"${off ? " disabled" : ""} aria-label="${fmtD(t)}"${ed ? ' aria-pressed="true"' : ""}>${d}</button>`;
+    g += `<button data-t="${t}" class="${inR ? "in" : ""}${ed ? " ed" : ""}${t === hi ? " td" : ""}${nd ? " nd" : ""}"${off ? " disabled" : ""} aria-label="${fmtD(t)}${nd ? ", немає даних" : ""}"${ed ? ' aria-pressed="true"' : ""}>${d}</button>`;
   }
-  const canP = kMid(y, m, 0) >= lo, canN = kMid(y, m + 1, 1) <= hi;
+  const canP = kMid(y, m, 0) >= lo - 366 * 86400, canN = kMid(y, m + 1, 1) <= hi;
   const el = $("rpCal");
   el.innerHTML = `<div class="rph"><button data-n="-1"${canP ? "" : " disabled"} aria-label="Попередній місяць">‹</button><b>${MNOM[m - 1]} ${y}</b><button data-n="1"${canN ? "" : " disabled"} aria-label="Наступний місяць">›</button></div><div class="rpg">${g}</div>`;
   el.querySelectorAll(".rph button").forEach((x) => (x.onclick = () => { const q = kp(kMid(rp.y, rp.m + +x.dataset.n, 1)); rp.y = q.y; rp.m = q.m; rpCal(); }));
