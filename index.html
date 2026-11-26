@@ -313,7 +313,7 @@ const nowS = () => Date.now() / 1000;
 const ts = (iso) => (iso ? Date.parse(iso) / 1000 : null);
 
 /* ---------- стан ---------- */
-let D = null, period = 7, rng = null, rp = null, selDay = null, showAll = false, jrMode = "off", schedDay = 0, lastFetchOk = 0;
+let D = null, period = 7, rng = null, rp = null, selDay = null, showAll = false, daysAll = false, jrMode = "off", schedDay = 0, lastFetchOk = 0;
 const fixed = (x) => (x == null ? null : x);
 
 /* ---------- завантаження ---------- */
@@ -640,13 +640,20 @@ function stats(now) {
   // смуги
   const pc = (v) => `${((v / 86400) * 100).toFixed(3)}%`;
   const byKey = Object.fromEntries(days.map((d) => [d.k, d]));
-  $("days").innerHTML = [...days].reverse().map((d) => {
+  // по днях: якщо днів більше тижня — 7 останніх і «Показати всі / Сховати» (вибраний прихований день розгортає список)
+  const DLIM = 7, dRev = [...days].reverse(), dFold = dRev.length > DLIM;
+  const dCut = dFold && !daysAll && !(selDay && dRev.findIndex((d) => d.k === selDay) >= DLIM);
+  $("days").innerHTML = (dCut ? dRev.slice(0, DLIM) : dRev).map((d) => {
     const L = d.t1 - d.t0;
     const p2 = (v) => `${((v / L) * 100).toFixed(3)}%`;
     const fut = d.t1 > now ? `<i class="f" style="left:${p2(now - d.t0)};right:0"></i>` : "";
     return `<div class="day${selDay === d.k ? " sel" : ""}" data-k="${d.k}"><div class="h"><b>${DN[d.p.wd]} ${pad(d.p.d)}.${pad(d.p.m)}</b><span>${d.tot ? dur(d.tot) : "без відключень"}</span></div>
       <div class="strip">${d.segs.map((s) => `<i class="${s.t}" style="left:${p2(s.s - d.t0)};width:${p2(s.e - s.s)}"></i>`).join("")}${fut}<i class="g"></i></div></div>`;
-  }).join("");
+  }).join("") + (dFold ? `<button class="more" id="dMore">${dCut ? `Показати всі (${dRev.length})` : "Сховати"}</button>` : "");
+  if ($("dMore")) $("dMore").onclick = () => {
+    if (dCut) daysAll = true;
+    else { daysAll = false; if (selDay && dRev.findIndex((d) => d.k === selDay) >= DLIM) selDay = null; }
+    render(); if (!daysAll) $("days").closest(".card").scrollIntoView({ block: "start", behavior: "smooth" }); };
   document.querySelectorAll(".day").forEach((el) => (el.onclick = () => { selDay = selDay === el.dataset.k ? null : el.dataset.k; tclick("day"); render(); }));
   // журнал
   const ON = jrMode === "on";
@@ -773,7 +780,7 @@ function rpRender() {
     if (B < A) [A, B] = [B, A];
     if (B < lo || A > hi) { $("rpE").textContent = `Журнал є з ${fmtD(lo)} до ${fmtD(hi)}`; return; }
     rng = { a: Math.max(A, lo), b: Math.min(B, hi) };
-    period = -1; rp = null; selDay = null; showAll = false; tclick("prange");
+    period = -1; rp = null; selDay = null; showAll = false; daysAll = false; tclick("prange");
     rpRender(); intro(); render();
   };
 }
@@ -910,7 +917,7 @@ document.querySelectorAll("#per button").forEach((b) => (b.onclick = () => {
   const p = +b.dataset.p;
   if (p === -1) { rp ? (rp = null) : rpOpen(); rpRender(); perTabs(); return; }
   rp = null; rpRender();
-  period = p; if (period !== 7) tclick(period ? "p30" : "pall"); selDay = null; showAll = false; intro(); render();
+  period = p; if (period !== 7) tclick(period ? "p30" : "pall"); selDay = null; showAll = false; daysAll = false; intro(); render();
 }));
 document.querySelectorAll("#schedTabs button").forEach((b) => (b.onclick = () => { schedDay = +b.dataset.d; if (schedDay) tclick("tomorrow"); render(); }));
 $("refresh").onclick = () => { tclick("refresh"); load(true); };
