@@ -15,7 +15,7 @@
   "_comment_min_outage_sec": "Коротші відключення в журнал не записуються.",
   "region": "dnipro",
   "_comment_region": "Файл outage-data-ua: dnipro | kyiv | kyiv-region | odesa.",
-  "group_key": "GPV5.1",
+  "group_key": "GPV17.1",
   "_comment_group_key": "Ключ черги всередині файлу, наприклад GPV1.1, GPV5.1.",
   "source": {
     "type": "ping",

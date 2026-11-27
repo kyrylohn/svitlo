@@ -2,12 +2,12 @@
 window.SVITLO = {
   // Підписи
   title: "Світло",
-  group: "5.1",                                   // номер черги / групи — лише для підписів
+  group: "17.1",                                   // номер черги / групи — лише для підписів
   provider: "ДТЕК Дніпровські електромережі",     // хто публікує графік (для підпису внизу)
 
   // Графік відключень: відкриті дані github.com/Baskerville42/outage-data-ua
   region: "dnipro",                               // dnipro | kyiv | kyiv-region | odesa
-  groupKey: "GPV5.1",                             // ключ черги у файлі регіону (GPV<черга>.<підчерга>)
+  groupKey: "GPV17.1",                             // ключ черги у файлі регіону (GPV<черга>.<підчерга>)
 
   // Стан світла з дому (data.json, який пушить exporter). "" — лише графік, без датчика й статистики.
   dataUrl: "https://raw.githubusercontent.com/kyrylohn/svitlo/data/data.json",

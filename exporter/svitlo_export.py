@@ -39,7 +39,7 @@ COMMIT_MSG = "Дані сторінки (оновлюються автомати
 DEFAULTS = {
     "repo_dir": "~/svitlo-data", "branch": "data", "interval": 60,
     "heartbeat_min": 15, "off_after": 3, "on_after": 2, "min_outage_sec": 60,
-    "region": "dnipro", "group_key": "GPV5.1",
+    "region": "dnipro", "group_key": "GPV17.1",
     "source": {"type": "ping", "host": "192.168.1.50"},
 }
 

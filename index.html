@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Світло · група 5.1</title>
-<meta name="description" content="Чи є світло в будинку зараз, графік відключень групи 5.1 і статистика відключень.">
-<meta property="og:title" content="Світло · група 5.1">
+<title>Світло · група 17.1</title>
+<meta name="description" content="Чи є світло в будинку зараз, графік відключень групи 17.1 і статистика відключень.">
+<meta property="og:title" content="Світло · група 17.1">
 <meta property="og:description" content="Чи є світло зараз, графік і статистика відключень.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://kyrylohn.github.io/svitlo/">
-<meta property="og:site_name" content="Світло · група 5.1">
+<meta property="og:site_name" content="Світло · група 17.1">
 <meta property="og:image" content="https://raw.githubusercontent.com/kyrylohn/svitlo/data/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Чи є світло зараз і графік відключень групи 5.1 на сьогодні">
+<meta property="og:image:alt" content="Чи є світло зараз і графік відключень групи 17.1 на сьогодні">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/kyrylohn/svitlo/data/og.png">
 <meta name="theme-color" content="#1E2430">
@@ -197,7 +197,7 @@ a{text-underline-offset:3px}
 <body>
 <main>
   <div class="top">
-    <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#262D3B"/><path d="M18 4 8 18h7l-2 10 11-15h-7z" fill="#FFB057"/></svg><span id="bT">Світло</span><span id="bG">· група 5.1</span></div>
+    <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#262D3B"/><path d="M18 4 8 18h7l-2 10 11-15h-7z" fill="#FFB057"/></svg><span id="bT">Світло</span><span id="bG">· група 17.1</span></div>
     <div class="upd"><i class="dot" id="dot" hidden aria-hidden="true"></i><span id="upd">Завантаження…</span><button id="refresh" aria-label="Оновити"><svg viewBox="0 0 24 24" fill="none" stroke="#DADDE2" stroke-width="2" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v4h-4"/></svg></button></div>
   </div>
   <div class="stale" id="stale"></div>
@@ -339,7 +339,7 @@ async function load(manual) {
 }
 
 /* ---------- графік з відкритих даних github.com/Baskerville42/outage-data-ua ----------
- * fact.data: { "<epoch київської півночі>": { "GPV5.1": { "1": "yes" | "no" | "first" | "second" | "maybe" | "mfirst" | "msecond", … "24": … } } }
+ * fact.data: { "<epoch київської півночі>": { "GPV17.1": { "1": "yes" | "no" | "first" | "second" | "maybe" | "mfirst" | "msecond", … "24": … } } }
  * година i — хвилини [(i-1)·60, i·60); no/first/second — відключення (вся година / перші / другі 30 хв), maybe/m* — можливе. */
 let G = null, odAt = 0;
 async function loadOD() {
